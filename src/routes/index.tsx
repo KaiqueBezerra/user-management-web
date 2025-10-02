@@ -1,14 +1,15 @@
 import { UserCog, UserPen, UserPlus } from "lucide-react";
 import { useState } from "react";
-import IconButton from "./components/form/icon-button";
-import CreateUserCard from "./components/cards/create-user-card/create-user-card";
-import LoginCard from "./components/cards/login-card/login-card";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toast } from "./components/toast/toast-function";
+import IconButton from "../components/form/icon-button";
+import CreateUserCard from "../components/cards/create-user-card/create-user-card";
+import LoginCard from "../components/cards/login-card/login-card";
+import { createFileRoute } from "@tanstack/react-router";
 
-const queryClient = new QueryClient();
+export const Route = createFileRoute("/")({
+  component: Index,
+});
 
-function App() {
+function Index() {
   const [showCreateUserCard, setShowCreateUserCard] = useState(false);
   const [showLoginCard, setShowLoginCard] = useState(false);
 
@@ -29,7 +30,7 @@ function App() {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="flex items-center gap-2 px-4 py-2">
           <UserCog className="size-8" />
@@ -58,9 +59,6 @@ function App() {
         {showCreateUserCard && <CreateUserCard onClose={handleCloseUserCard} />}
         {showLoginCard && <LoginCard onClose={handleCloseLoginCard} />}
       </div>
-      <Toast />
-    </QueryClientProvider>
+    </>
   );
 }
-
-export default App;
