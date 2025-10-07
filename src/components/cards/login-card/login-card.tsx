@@ -6,6 +6,8 @@ import z from "zod";
 import { useLogin } from "../../../http/use-login";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "../../toast/toast";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 
 interface UserCardProps {
   onClose: () => void;
@@ -26,6 +28,9 @@ export default function LoginCard({ onClose }: UserCardProps) {
   const { mutateAsync: login } = useLogin();
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const router = useRouter();
+  const navigate = useNavigate();
+
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -35,7 +40,16 @@ export default function LoginCard({ onClose }: UserCardProps) {
   });
 
   async function handleLogin(data: LoginFormData) {
-    await login(data);
+    try {
+      await login(data);
+      toast.success("Login successful!");
+      onClose();
+      router.invalidate().finally(() => {
+        navigate({ to: "/dashboard" });
+      });
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    }
   }
 
   const { isSubmitting } = form.formState;

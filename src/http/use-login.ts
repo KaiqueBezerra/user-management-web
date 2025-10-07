@@ -1,8 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest } from "./types/login-request";
 import type { LoginResponse } from "./types/login-response";
+import { useAuth } from "../context/auth/use-auth";
 
 export function useLogin() {
+    const { login } = useAuth();
     // const queryClient = useQueryClient();
 
     return useMutation({
@@ -26,12 +28,7 @@ export function useLogin() {
         },
 
         onSuccess: (data) => {
-            if (data && data.token) {
-                // Armazene o token no localStorage (ou sessionStorage)
-                localStorage.setItem("authToken", data.token);
-                // Aqui você pode configurar algo para disparar quando o login for bem-sucedido (como redirecionamento)
-                console.log("Successfully stored token:", data.token);
-            }
+            login(data.token);
         },
 
         onError: (error) => {

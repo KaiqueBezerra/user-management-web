@@ -1,18 +1,18 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toast } from "../components/toast/toast-function";
+import type { AuthContextType } from "../context/auth/auth-context";
 
-const queryClient = new QueryClient();
+interface MyRouterContext {
+  auth: AuthContextType;
+}
 
-const RootLayout = () => (
-  <>
-    <QueryClientProvider client={queryClient}>
+export const Route = createRootRouteWithContext<MyRouterContext>()({
+  component: () => (
+    <>
       <Outlet />
-      <TanStackRouterDevtools />
       <Toast />
-    </QueryClientProvider>
-  </>
-);
-
-export const Route = createRootRoute({ component: RootLayout });
+      <TanStackRouterDevtools position="bottom-right" initialIsOpen={false} />
+    </>
+  ),
+});
