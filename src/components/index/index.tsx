@@ -3,10 +3,17 @@ import { useState } from "react";
 import IconButton from "../form/icon-button";
 import LoginCard from "../cards/login-card/login-card";
 import CreateUserCard from "../cards/create-user-card/create-user-card";
+import { useAuth } from "../../context/auth/use-auth";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 
 export function IndexComponent() {
+  const { isAuthenticated } = useAuth();
+
   const [showCreateUserCard, setShowCreateUserCard] = useState(false);
   const [showLoginCard, setShowLoginCard] = useState(false);
+
+  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleCreateUserClick = () => {
     setShowCreateUserCard(true);
@@ -17,12 +24,23 @@ export function IndexComponent() {
   };
 
   const handleLoginClick = () => {
+    console.log("teste1");
+
     setShowLoginCard(true);
   };
 
   const handleCloseLoginCard = () => {
     setShowLoginCard(false);
   };
+
+  const handleNavigateToDashboard = () => {
+    console.log("teste2");
+
+    router.invalidate().finally(() => {
+      navigate({ to: "/dashboard" });
+    });
+  };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center h-screen">
@@ -45,13 +63,17 @@ export function IndexComponent() {
           <IconButton
             icon={UserPen}
             text="Manage Users"
-            onClick={handleLoginClick}
+            onClick={
+              !isAuthenticated ? handleLoginClick : handleNavigateToDashboard
+            }
             variant="primary"
           />
         </div>
 
         {showCreateUserCard && <CreateUserCard onClose={handleCloseUserCard} />}
-        {showLoginCard && <LoginCard onClose={handleCloseLoginCard} />}
+        {showLoginCard && !isAuthenticated && (
+          <LoginCard onClose={handleCloseLoginCard} />
+        )}
       </div>
     </>
   );

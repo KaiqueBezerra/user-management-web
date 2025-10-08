@@ -1,5 +1,5 @@
 import type { LucideProps } from "lucide-react";
-import type { ComponentType } from "react";
+import type { ComponentProps, ComponentType } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "success" | "warning";
 
@@ -11,24 +11,23 @@ const variantStyles: Record<ButtonVariant, string> = {
   warning: "bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-300",
 };
 
-interface IconButtonProps {
+type IconButtonProps = ComponentProps<"button"> & {
   icon: ComponentType<LucideProps>;
   text: string;
-  onClick?: () => void;
   variant?: ButtonVariant;
   disabled?: boolean;
   fullWidth?: boolean;
   className?: string;
-}
+};
 
 export default function IconButton({
   icon: Icon,
   text,
-  onClick,
   variant = "primary",
   disabled = false,
   fullWidth = false,
   className = "",
+  ...props
 }: IconButtonProps) {
   return (
     <button
@@ -38,8 +37,8 @@ export default function IconButton({
       ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} 
       ${fullWidth ? "w-full" : ""} 
       ${className}`}
-      onClick={onClick}
       disabled={disabled}
+      {...props}
     >
       {Icon && <Icon className="size-4 inline-block mr-2" />}
       {text}

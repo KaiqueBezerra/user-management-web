@@ -1,6 +1,8 @@
+import type { ComponentProps } from "react";
+
 type ButtonVariant = "primary" | "secondary" | "danger" | "success" | "warning";
 
-interface ButtonProps {
+type ButtonProps = ComponentProps<"button"> & {
   text: string;
   onClick?: () => void;
   variant?: ButtonVariant;
@@ -8,7 +10,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
-}
+};
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-700",
@@ -26,6 +28,7 @@ export function Button({
   fullWidth = false,
   className = "",
   type = "button",
+  ...props
 }: ButtonProps) {
   return (
     <button
@@ -38,6 +41,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       type={type}
+      {...props}
     >
       {text}
     </button>

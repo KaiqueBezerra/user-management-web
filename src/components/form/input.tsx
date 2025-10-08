@@ -1,15 +1,19 @@
+import type { ComponentProps } from "react";
+
+type InputProps = ComponentProps<"input"> & {
+  label: string;
+  id: string;
+  type?: string;
+  error?: string;
+};
+
 export default function Input({
   label,
   id,
   type = "text",
   error,
   ...rest
-}: {
-  label: string;
-  id: string;
-  type?: string;
-  error?: string; // <-- aqui
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+}: InputProps) {
   return (
     <div className="mb-4">
       <label htmlFor={id} className="block text-sm font-medium mb-1">
