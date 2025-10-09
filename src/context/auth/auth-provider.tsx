@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode, useCallback } from "react";
 import { AuthContext, type User } from "./auth-context";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -9,7 +9,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAuthenticated = !!token;
 
-  async function validateToken(token: string) {
+  const validateToken = useCallback(async (token: string) => {
     try {
       const response = await fetch("http://localhost:3333/api/auth/validate", {
         headers: {
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Token validation failed:", err);
       logout();
     }
-  }
+  }, []);
 
   function login(newToken: string) {
     localStorage.setItem("token", newToken);
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       validateToken(token);
     }
-  }, []); //
+  }, [token, validateToken]); //
 
   return (
     <AuthContext.Provider

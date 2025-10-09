@@ -7,6 +7,7 @@ import { useCreateUser } from "../../../http/use-create-user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 
 interface UserCardProps {
   onClose: () => void;
@@ -30,6 +31,9 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
 
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const router = useRouter();
+  const navigate = useNavigate();
+
   const form = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
@@ -45,6 +49,9 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
       await createUser(data);
       toast.success("User created successfully!");
       onClose();
+      router.invalidate().finally(() => {
+        navigate({ to: "/dashboard" });
+      });
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : String(error));
     }
@@ -66,7 +73,7 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
   const { isSubmitting } = form.formState;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
       <div
         ref={cardRef}
         className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"

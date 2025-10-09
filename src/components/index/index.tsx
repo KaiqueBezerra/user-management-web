@@ -24,8 +24,6 @@ export function IndexComponent() {
   };
 
   const handleLoginClick = () => {
-    console.log("teste1");
-
     setShowLoginCard(true);
   };
 
@@ -34,8 +32,6 @@ export function IndexComponent() {
   };
 
   const handleNavigateToDashboard = () => {
-    console.log("teste2");
-
     router.invalidate().finally(() => {
       navigate({ to: "/dashboard" });
     });

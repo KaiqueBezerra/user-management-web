@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+import { twMerge } from "tailwind-merge"; // 👈 importa aqui
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "success" | "warning";
 
@@ -30,14 +31,18 @@ export function Button({
   type = "button",
   ...props
 }: ButtonProps) {
+  const baseClasses = `
+    px-4 py-2 rounded-md border transition-colors
+    ${variantStyles[variant]}
+    ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+    ${fullWidth ? "w-full" : ""}
+  `;
+
+  const mergedClasses = twMerge(baseClasses, className);
+
   return (
     <button
-      className={`px-4 py-2 rounded-md border transition-colors ${
-        variantStyles[variant]
-      } 
-      ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} 
-      ${fullWidth ? "w-full" : ""} 
-      ${className}`}
+      className={mergedClasses}
       onClick={onClick}
       disabled={disabled}
       type={type}
