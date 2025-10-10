@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       validateToken(token);
     }
-  }, [token, validateToken]); //
+  }, [token, validateToken]);
 
   return (
     <AuthContext.Provider

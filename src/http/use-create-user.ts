@@ -17,9 +17,7 @@ export function useCreateUser() {
 
             const result: CreateUserResponse = await response.json();
 
-            // Verifica se o status não está OK (ex: 400, 401, 429, 500, etc.)
             if (!response.ok) {
-                // Lança um erro personalizado contendo a mensagem do backend
                 throw new Error(result.message || "Unknown error creating user.");
             }
 

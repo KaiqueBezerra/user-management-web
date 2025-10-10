@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { twMerge } from "tailwind-merge"; // 👈 importa aqui
+import { twMerge } from "tailwind-merge";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "success" | "warning";
 

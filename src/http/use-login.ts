@@ -5,7 +5,6 @@ import { useAuth } from "../context/auth/use-auth";
 
 export function useLogin() {
     const { login } = useAuth();
-    // const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (data: LoginRequest) => {
@@ -20,7 +19,6 @@ export function useLogin() {
             const result: LoginResponse = await response.json();
 
             if (!response.ok) {
-                // Lança um erro personalizado contendo a mensagem do backend
                 throw new Error(result.message || "Unknown error logging in.");
             }
 

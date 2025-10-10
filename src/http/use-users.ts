@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import type { GetUsersResponse } from "./types/get-users-response";
 
-export function useUsers(page: number, limit: number) {
+export function useUsers(page: number, limit: number, sortBy: string, order: string) {
     return useQuery({
-        queryKey: ["get-users", page, limit],
+        queryKey: ["get-users", page, limit, sortBy, order],
         queryFn: async () => {
             const response = await fetch(
-                `http://localhost:3333/api/users?page=${page}&limit=${limit}`,
+                `http://localhost:3333/api/users?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}`,
                 {
                     method: "GET",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 }
             );
@@ -20,7 +20,7 @@ export function useUsers(page: number, limit: number) {
             }
 
             const result: GetUsersResponse = await response.json();
-            return result
+            return result;
         },
     });
 }
