@@ -5,6 +5,7 @@ type DashboardSearch = {
   page?: number;
   sortBy?: "created_at" | "updated_at";
   order?: "asc" | "desc";
+  role?: "admin" | "user" | "all";
 };
 
 export const Route = createFileRoute("/_auth/dashboard")({
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/_auth/dashboard")({
       page: Number(search.page ?? 1),
       sortBy: search.sortBy ?? "created_at",
       order: search.order ?? "desc",
+      role: search.role ?? "all",
     };
   },
 });

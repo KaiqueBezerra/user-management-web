@@ -40,7 +40,7 @@ export default function IconButton({
       disabled={disabled}
       {...props}
     >
-      {Icon && <Icon className="size-4 inline-block mr-2" />}
+      {Icon && <Icon className="size-4 mr-2" />}
       {text}
     </button>
   );

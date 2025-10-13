@@ -3,14 +3,28 @@ export function DashboardFilters({
   setSortBy,
   order,
   setOrder,
+  role,
+  setRole,
 }: {
   sortBy: "created_at" | "updated_at";
   setSortBy: (sortBy: "created_at" | "updated_at") => void;
   order: "asc" | "desc";
   setOrder: (order: "asc" | "desc") => void;
+  role: "user" | "admin" | "all";
+  setRole: (role: "user" | "admin" | "all") => void;
 }) {
   return (
     <div className="flex gap-2 items-center">
+      <select
+        value={role}
+        onChange={(e) => setRole(e.target.value as "admin" | "user" | "all")}
+        className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-sm"
+      >
+        <option value="all">All</option>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+
       <select
         value={sortBy}
         onChange={(e) =>

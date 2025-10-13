@@ -13,6 +13,8 @@ export function DashboardUserList({
   order,
   setSortBy,
   setOrder,
+  role,
+  setRole,
 }: {
   users: User[];
   page: number | undefined;
@@ -22,6 +24,8 @@ export function DashboardUserList({
   order: "asc" | "desc";
   setSortBy: (value: "created_at" | "updated_at") => void;
   setOrder: (value: "asc" | "desc") => void;
+  role: "user" | "admin" | "all";
+  setRole: (value: "user" | "admin" | "all") => void;
 }) {
   return (
     <div className="bg-zinc-900 border border-zinc-700 rounded-lg shadow-md p-6">
@@ -33,6 +37,8 @@ export function DashboardUserList({
           setSortBy={setSortBy}
           order={order}
           setOrder={setOrder}
+          role={role}
+          setRole={setRole}
         />
       </div>
 
