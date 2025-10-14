@@ -1,20 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-
-type GetUserByEmailGeminiRequest = {
-    email: string;
-};
-
-type GetUserByEmailGeminiResponse = {
-    message: string;
-    user: {
-        id: string;
-        name: string;
-        email: string;
-        role: string;
-        created_at: string;
-        updated_at?: string | null;
-    };
-};
+import type { GetUserByEmailGeminiRequest } from "./types/get-user-by-email-gemini-request";
+import type { GetUserByEmailGeminiResponse } from "./types/get-user-by-email-gemini-response";
 
 export function useGetUserByEmailGemini() {
     return useMutation({

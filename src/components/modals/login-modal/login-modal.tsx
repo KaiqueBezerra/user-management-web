@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 
-interface UserCardProps {
+interface LoginModalProps {
   onClose: () => void;
 }
 
@@ -24,9 +24,9 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export default function LoginCard({ onClose }: UserCardProps) {
+export default function LoginModal({ onClose }: LoginModalProps) {
   const { mutateAsync: login } = useLogin();
-  const cardRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
   const navigate = useNavigate();
@@ -45,7 +45,10 @@ export default function LoginCard({ onClose }: UserCardProps) {
       toast.success("Login successful!");
       onClose();
       router.invalidate().finally(() => {
-        navigate({ to: "/dashboard" });
+        navigate({
+          to: "/dashboard",
+          search: { page: 1, sortBy: "created_at", order: "desc", role: "all" },
+        });
       });
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : String(error));
@@ -56,7 +59,10 @@ export default function LoginCard({ onClose }: UserCardProps) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     }
@@ -70,7 +76,7 @@ export default function LoginCard({ onClose }: UserCardProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
-        ref={cardRef}
+        ref={modalRef}
         className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"
       >
         <button

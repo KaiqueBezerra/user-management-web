@@ -7,9 +7,10 @@ import { useCreateUser } from "../../../http/use-create-user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "../../../context/auth/use-auth";
 
-interface UserCardProps {
+interface UserModalProps {
   onClose: () => void;
 }
 
@@ -26,13 +27,14 @@ const createUserSchema = z.object({
 
 type CreateUserFormData = z.infer<typeof createUserSchema>;
 
-export default function CreateUserCard({ onClose }: UserCardProps) {
+export default function CreateUserModal({ onClose }: UserModalProps) {
   const { mutateAsync: createUser } = useCreateUser();
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const router = useRouter();
   const navigate = useNavigate();
+
+  const { isAuthenticated } = useAuth();
 
   const form = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
@@ -49,9 +51,12 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
       await createUser(data);
       toast.success("User created successfully!");
       onClose();
-      router.invalidate().finally(() => {
-        navigate({ to: "/dashboard" });
-      });
+      if (isAuthenticated) {
+        navigate({
+          to: "/dashboard",
+          search: { page: 1, sortBy: "created_at", order: "desc", role: "all" },
+        });
+      }
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : String(error));
     }
@@ -59,7 +64,10 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     }
@@ -75,7 +83,7 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
   return (
     <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
       <div
-        ref={cardRef}
+        ref={modalRef}
         className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"
       >
         <button

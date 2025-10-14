@@ -1,22 +1,19 @@
-import { useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useUsers } from "../../http/use-users";
 import { toast } from "../toast/toast";
 import { useAuth } from "../../context/auth/use-auth";
 import { useEffect, useState } from "react";
-import CreateUserCard from "../cards/create-user-card/create-user-card";
 import { Spin } from "../spin/spin";
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardUserList } from "./dashboard-user-list";
-import { ChatGeminiModal } from "../cards/chat-gemini-modal/chat-gemini-modal";
 import { MessageCircle } from "lucide-react";
+import CreateUserModal from "../modals/create-user-modal/create-user-modal";
+import { ChatGeminiModal } from "../modals/chat-gemini-modal/chat-gemini-modal";
 
 export function DashboardComponent() {
   const { user, logout } = useAuth();
-
-  const router = useRouter();
   const navigate = useNavigate();
 
-  // Reads parameters from the URL
   const search = useSearch({
     from: "/_auth/dashboard",
   }) as {
@@ -26,7 +23,6 @@ export function DashboardComponent() {
     role?: "admin" | "user" | "all";
   };
 
-  // initializes with values from the URL (or defaults)
   const [page, setPage] = useState(Number(search?.page ?? 1));
   const [sortBy, setSortBy] = useState<"created_at" | "updated_at">(
     search?.sortBy ?? "created_at"
@@ -42,26 +38,20 @@ export function DashboardComponent() {
 
   const [showCreateUserCard, setShowCreateUserCard] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
-
   const [showGeminiModal, setShowGeminiModal] = useState(false);
-
-  const handleCreateUserClick = () => setShowCreateUserCard(true);
-  const handleCloseUserCard = () => setShowCreateUserCard(false);
+  const [animateModal, setAnimateModal] = useState(false);
 
   function handleLogout() {
     logout();
-    router.invalidate().finally(() => {
-      navigate({ to: "/" });
-    });
+    navigate({ to: "/" });
     toast.success("Logout successful!");
   }
 
-  // Updates the URL whenever page, sortBy, or order change
   useEffect(() => {
     navigate({
       to: "/dashboard",
       search: { page, sortBy, order, role },
-      replace: true, // replaces the current entry in the history stack
+      replace: true,
     });
   }, [page, sortBy, order, navigate, role]);
 
@@ -73,11 +63,22 @@ export function DashboardComponent() {
     return <Spin />;
   }
 
+  const toggleGeminiModal = () => {
+    if (showGeminiModal) {
+      // inicia a animação de saída
+      setAnimateModal(false);
+      setTimeout(() => setShowGeminiModal(false), 200);
+    } else {
+      setShowGeminiModal(true);
+      setTimeout(() => setAnimateModal(true), 10);
+    }
+  };
+
   return (
     <section className="grid gap-6 p-4">
       <DashboardHeader
         name={user?.name ?? ""}
-        handleCreateUserClick={handleCreateUserClick}
+        handleCreateUserClick={() => setShowCreateUserCard(true)}
         handleLogout={handleLogout}
       />
 
@@ -94,21 +95,31 @@ export function DashboardComponent() {
         setRole={setRole}
       />
 
-      {showCreateUserCard && <CreateUserCard onClose={handleCloseUserCard} />}
+      {showCreateUserCard && (
+        <CreateUserModal onClose={() => setShowCreateUserCard(false)} />
+      )}
 
-      {/* Floating button to open the Gemini chat modal */}
-      <div className="fixed bottom-6 right-6">
-        <button
-          className="bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-700 flex justify-center 
-          items-center !rounded-full !p-4 shadow-lg hover:scale-105 px-4 py-2 border transition-colors cursor-pointer"
-          onClick={() => setShowGeminiModal(true)}
-        >
-          <MessageCircle className="size-4" />
-        </button>
-      </div>
+      {/* Botão flutuante do chat */}
+      <button
+        onClick={toggleGeminiModal}
+        className="fixed bottom-6 right-6 bg-zinc-900 hover:bg-zinc-800 text-white 
+        flex justify-center items-center rounded-full p-4 shadow-lg cursor-pointer
+        hover:scale-105 transition-transform border border-zinc-700"
+      >
+        <MessageCircle className="size-5" />
+      </button>
 
+      {/* Modal com transição suave */}
       {showGeminiModal && (
-        <ChatGeminiModal onClose={() => setShowGeminiModal(false)} />
+        <div
+          className={`fixed bottom-1 right-1 z-50 transition-all duration-200 ease-in-out transform ${
+            animateModal
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-5"
+          }`}
+        >
+          <ChatGeminiModal onClose={toggleGeminiModal} />
+        </div>
       )}
     </section>
   );

@@ -1,10 +1,10 @@
 import { UserCog, UserPen, UserPlus } from "lucide-react";
 import { useState } from "react";
 import IconButton from "../form/icon-button";
-import LoginCard from "../cards/login-card/login-card";
-import CreateUserCard from "../cards/create-user-card/create-user-card";
 import { useAuth } from "../../context/auth/use-auth";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import CreateUserModal from "../modals/create-user-modal/create-user-modal";
+import LoginModal from "../modals/login-modal/login-modal";
 
 export function IndexComponent() {
   const { isAuthenticated } = useAuth();
@@ -12,14 +12,13 @@ export function IndexComponent() {
   const [showCreateUserCard, setShowCreateUserCard] = useState(false);
   const [showLoginCard, setShowLoginCard] = useState(false);
 
-  const router = useRouter();
   const navigate = useNavigate();
 
   const handleCreateUserClick = () => {
     setShowCreateUserCard(true);
   };
 
-  const handleCloseUserCard = () => {
+  const handleCloseUserModal = () => {
     setShowCreateUserCard(false);
   };
 
@@ -32,8 +31,9 @@ export function IndexComponent() {
   };
 
   const handleNavigateToDashboard = () => {
-    router.invalidate().finally(() => {
-      navigate({ to: "/dashboard" });
+    navigate({
+      to: "/dashboard",
+      search: { page: 1, sortBy: "created_at", order: "desc", role: "all" },
     });
   };
 
@@ -66,9 +66,11 @@ export function IndexComponent() {
           />
         </div>
 
-        {showCreateUserCard && <CreateUserCard onClose={handleCloseUserCard} />}
+        {showCreateUserCard && (
+          <CreateUserModal onClose={handleCloseUserModal} />
+        )}
         {showLoginCard && !isAuthenticated && (
-          <LoginCard onClose={handleCloseLoginCard} />
+          <LoginModal onClose={handleCloseLoginCard} />
         )}
       </div>
     </>
