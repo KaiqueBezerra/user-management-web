@@ -43,7 +43,11 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
         ...prev,
         {
           from: "ai",
-          text: `${result.message}\n\n👤 Name: ${result.user.name}\n📧 Email: ${result.user.email}\n🧩 Role: ${result.user.role}`,
+          text: `${result.message}\n\n👤 Name: ${result.user.name}\n📧 Email: ${
+            result.user.email
+          }\n🧩 Role: ${result.user.role}\n🗃️ Deactivated: ${
+            result.user.deactivated ? "Deactivated" : "Active"
+          }`,
         },
       ]);
     } catch (error: unknown) {

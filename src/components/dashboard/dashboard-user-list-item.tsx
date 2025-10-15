@@ -24,6 +24,17 @@ export function DashboardUserListItem({ user }: { user: User }) {
           ? new Date(user.updated_at).toLocaleDateString("pt-BR")
           : "N/A"}
       </td>
+      <td className="py-3 px-4 text-sm">
+        <span
+          className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+            user.deactivated
+              ? "bg-red-300 text-red-900"
+              : "bg-green-300 text-green-900"
+          }`}
+        >
+          {user.deactivated ? "Deactivated" : "Active"}
+        </span>
+      </td>
     </tr>
   );
 }

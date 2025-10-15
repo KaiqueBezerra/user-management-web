@@ -7,5 +7,6 @@ export type GetUserByEmailGeminiResponse = {
         role: string;
         created_at: string;
         updated_at?: string | null;
+        deactivated: boolean
     };
 };

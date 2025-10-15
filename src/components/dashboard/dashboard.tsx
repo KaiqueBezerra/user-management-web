@@ -1,3 +1,5 @@
+// src/components/dashboard/dashboard.tsx
+
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useUsers } from "../../http/use-users";
 import { toast } from "../toast/toast";
@@ -21,6 +23,7 @@ export function DashboardComponent() {
     sortBy?: "created_at" | "updated_at";
     order?: "asc" | "desc";
     role?: "admin" | "user" | "all";
+    deactivated?: "true" | "false" | "all";
   };
 
   const [page, setPage] = useState(Number(search?.page ?? 1));
@@ -31,9 +34,19 @@ export function DashboardComponent() {
   const [role, setRole] = useState<"admin" | "user" | "all">(
     search?.role ?? "all"
   );
+  const [deactivated, setDeactivated] = useState<"true" | "false" | "all">(
+    search?.deactivated ?? "all"
+  );
   const limit = 10;
 
-  const { data, isLoading } = useUsers(page, limit, sortBy, order, role);
+  const { data, isLoading } = useUsers(
+    page,
+    limit,
+    sortBy,
+    order,
+    role,
+    deactivated
+  );
   const users = data?.users ?? [];
 
   const [showCreateUserCard, setShowCreateUserCard] = useState(false);
@@ -50,10 +63,10 @@ export function DashboardComponent() {
   useEffect(() => {
     navigate({
       to: "/dashboard",
-      search: { page, sortBy, order, role },
+      search: { page, sortBy, order, role, deactivated },
       replace: true,
     });
-  }, [page, sortBy, order, navigate, role]);
+  }, [page, sortBy, order, role, deactivated, navigate]);
 
   useEffect(() => {
     if (user) setLoadingUser(false);
@@ -65,7 +78,6 @@ export function DashboardComponent() {
 
   const toggleGeminiModal = () => {
     if (showGeminiModal) {
-      // inicia a animação de saída
       setAnimateModal(false);
       setTimeout(() => setShowGeminiModal(false), 200);
     } else {
@@ -93,13 +105,14 @@ export function DashboardComponent() {
         setOrder={setOrder}
         role={role}
         setRole={setRole}
+        deactivated={deactivated}
+        setDeactivated={setDeactivated}
       />
 
       {showCreateUserCard && (
         <CreateUserModal onClose={() => setShowCreateUserCard(false)} />
       )}
 
-      {/* Botão flutuante do chat */}
       <button
         onClick={toggleGeminiModal}
         className="fixed bottom-6 right-6 bg-zinc-900 hover:bg-zinc-800 text-white 
@@ -109,7 +122,6 @@ export function DashboardComponent() {
         <MessageCircle className="size-5" />
       </button>
 
-      {/* Modal com transição suave */}
       {showGeminiModal && (
         <div
           className={`fixed bottom-1 right-1 z-50 transition-all duration-200 ease-in-out transform ${

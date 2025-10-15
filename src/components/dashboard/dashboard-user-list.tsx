@@ -15,6 +15,8 @@ export function DashboardUserList({
   setOrder,
   role,
   setRole,
+  deactivated,
+  setDeactivated,
 }: {
   users: User[];
   page: number | undefined;
@@ -26,6 +28,8 @@ export function DashboardUserList({
   setOrder: (value: "asc" | "desc") => void;
   role: "user" | "admin" | "all";
   setRole: (value: "user" | "admin" | "all") => void;
+  deactivated: "true" | "false" | "all";
+  setDeactivated: (value: "true" | "false" | "all") => void;
 }) {
   return (
     <div className="bg-zinc-900 border border-zinc-700 rounded-lg shadow-md p-6">
@@ -39,6 +43,8 @@ export function DashboardUserList({
           setOrder={setOrder}
           role={role}
           setRole={setRole}
+          deactivated={deactivated}
+          setDeactivated={setDeactivated}
         />
       </div>
 
@@ -54,6 +60,9 @@ export function DashboardUserList({
               </th>
               <th className="py-2 px-4 text-left text-sm font-medium">
                 Updated At
+              </th>
+              <th className="py-2 px-4 text-left text-sm font-medium">
+                Deactivated
               </th>
             </tr>
           </thead>

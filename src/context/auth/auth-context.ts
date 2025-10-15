@@ -7,6 +7,7 @@ export type User = {
   role: string;
   created_at: string;
   updated_at: string | null;
+  deactivated: boolean;
 };
 
 export type AuthContextType = {
