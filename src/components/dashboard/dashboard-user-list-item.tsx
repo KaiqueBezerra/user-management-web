@@ -1,8 +1,14 @@
 import type { User } from "../../context/auth/auth-context";
 
-export function DashboardUserListItem({ user }: { user: User }) {
+export function DashboardUserListItem({
+  user,
+  onClick,
+}: {
+  user: User;
+  onClick: () => void;
+}) {
   return (
-    <tr className="hover:bg-zinc-800">
+    <tr className="hover:bg-zinc-800 cursor-pointer" onClick={onClick}>
       <td className="py-3 px-4 text-sm">{user.name}</td>
       <td className="py-3 px-4 text-sm">{user.email}</td>
       <td className="py-3 px-4 text-sm">

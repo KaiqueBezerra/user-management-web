@@ -4,6 +4,8 @@ import { useGetUserByEmailGemini } from "../../../http/use-get-user-by-email-gem
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconButton } from "../../form/icon-button";
+import { Input } from "../../form/input";
 
 type Message = {
   from: "user" | "ai";
@@ -109,25 +111,20 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
         >
           <div className="flex gap-2">
             <div className="flex-1">
-              <input
+              <Input
                 id="email"
                 type="email"
                 placeholder="Enter an email..."
                 {...form.register("email")}
                 disabled={isSubmitting}
-                className="bg-zinc-900 w-full px-4 py-2 border rounded-md
-                focus:outline-none focus:ring-2 border-zinc-700 focus:ring-zinc-400"
               />
             </div>
 
-            <button
-              className="flex items-center justify-center bg-zinc-900 hover:bg-zinc-800 
-              text-white border-zinc-700 px-4 py-2 border rounded-md transition-colors cursor-pointer"
+            <IconButton
+              icon={Send}
+              onClick={form.handleSubmit(handleSend)}
               disabled={isSubmitting}
-              type="submit"
-            >
-              <Send />
-            </button>
+            />
           </div>
           {form.formState.errors.email && (
             <p className="text-sm text-red-500 mt-1">

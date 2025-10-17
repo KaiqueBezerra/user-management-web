@@ -4,4 +4,5 @@ export type GetUserResponse = {
     email: string;
     createdAt: string;
     updatedAt: string;
+    role: string;
 };

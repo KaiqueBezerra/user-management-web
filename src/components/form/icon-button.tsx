@@ -1,5 +1,6 @@
 import type { LucideProps } from "lucide-react";
 import type { ComponentProps, ComponentType } from "react";
+import { twMerge } from "tailwind-merge";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "success" | "warning";
 
@@ -13,14 +14,14 @@ const variantStyles: Record<ButtonVariant, string> = {
 
 type IconButtonProps = ComponentProps<"button"> & {
   icon: ComponentType<LucideProps>;
-  text: string;
+  text?: string;
   variant?: ButtonVariant;
   disabled?: boolean;
   fullWidth?: boolean;
   className?: string;
 };
 
-export default function IconButton({
+export function IconButton({
   icon: Icon,
   text,
   variant = "primary",
@@ -29,18 +30,19 @@ export default function IconButton({
   className = "",
   ...props
 }: IconButtonProps) {
+  const baseClasses = `
+    flex items-center px-4 py-2 border rounded-md transition-colors
+    ${variantStyles[variant]}
+    ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+    ${fullWidth ? "w-full" : ""}
+    ${!text ? "justify-center" : ""}
+  `;
+
+  const mergedClasses = twMerge(baseClasses, className);
+
   return (
-    <button
-      className={`flex items-center px-4 py-2 border rounded-md transition-colors ${
-        variantStyles[variant]
-      } 
-      ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} 
-      ${fullWidth ? "w-full" : ""} 
-      ${className}`}
-      disabled={disabled}
-      {...props}
-    >
-      {Icon && <Icon className="size-4 mr-2" />}
+    <button className={mergedClasses} disabled={disabled} {...props}>
+      {Icon && <Icon className={`size-4 ${text ? "mr-2" : ""}`} />}
       {text}
     </button>
   );

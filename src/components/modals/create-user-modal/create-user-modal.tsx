@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
-import Input from "../../form/input";
+import { Input } from "../../form/input";
 import { Button } from "../../form/button";
 import z from "zod";
 import { useCreateUser } from "../../../http/use-create-user";
@@ -27,7 +27,7 @@ const createUserSchema = z.object({
 
 type CreateUserFormData = z.infer<typeof createUserSchema>;
 
-export default function CreateUserModal({ onClose }: UserModalProps) {
+export function CreateUserModal({ onClose }: UserModalProps) {
   const { mutateAsync: createUser } = useCreateUser();
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,13 @@ export default function CreateUserModal({ onClose }: UserModalProps) {
       if (isAuthenticated) {
         navigate({
           to: "/dashboard",
-          search: { page: 1, sortBy: "created_at", order: "desc", role: "all" },
+          search: {
+            page: 1,
+            sortBy: "created_at",
+            order: "desc",
+            role: "all",
+            deactivated: "all",
+          },
         });
       }
     } catch (error: unknown) {
@@ -95,7 +101,10 @@ export default function CreateUserModal({ onClose }: UserModalProps) {
 
         <h2 className="text-2xl font-bold mb-6">Create new user</h2>
 
-        <form onSubmit={form.handleSubmit(handleCreateUser)}>
+        <form
+          onSubmit={form.handleSubmit(handleCreateUser)}
+          className="space-y-4"
+        >
           <Input
             label="Name"
             id="name"

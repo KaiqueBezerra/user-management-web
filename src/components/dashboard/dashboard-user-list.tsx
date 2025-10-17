@@ -1,8 +1,9 @@
-import type { SetStateAction } from "react";
+import { useState, type SetStateAction } from "react";
 import type { User } from "../../context/auth/auth-context";
 import { DashboardPagination } from "./dashboard-pagination";
 import { DashboardUserListItem } from "./dashboard-user-list-item";
 import { DashboardFilters } from "./dashboard-filters";
+import { UserDetailsModal } from "../modals/user-details-modal/user-details-modal";
 
 export function DashboardUserList({
   users,
@@ -31,6 +32,8 @@ export function DashboardUserList({
   deactivated: "true" | "false" | "all";
   setDeactivated: (value: "true" | "false" | "all") => void;
 }) {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
   return (
     <div className="bg-zinc-900 border border-zinc-700 rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-4">
@@ -68,7 +71,11 @@ export function DashboardUserList({
           </thead>
           <tbody className="divide-y divide-zinc-700">
             {users.map((user) => (
-              <DashboardUserListItem key={user.id} user={user} />
+              <DashboardUserListItem
+                key={user.id}
+                user={user}
+                onClick={() => setSelectedUser(user)}
+              />
             ))}
           </tbody>
         </table>
@@ -79,6 +86,13 @@ export function DashboardUserList({
         totalPages={totalPages}
         setPage={setPage}
       />
+
+      {selectedUser && (
+        <UserDetailsModal
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 }

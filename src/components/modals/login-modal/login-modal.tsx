@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
-import Input from "../../form/input";
+import { Input } from "../../form/input";
 import { Button } from "../../form/button";
 import z from "zod";
 import { useLogin } from "../../../http/use-login";
@@ -24,7 +24,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export default function LoginModal({ onClose }: LoginModalProps) {
+export function LoginModal({ onClose }: LoginModalProps) {
   const { mutateAsync: login } = useLogin();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +47,13 @@ export default function LoginModal({ onClose }: LoginModalProps) {
       router.invalidate().finally(() => {
         navigate({
           to: "/dashboard",
-          search: { page: 1, sortBy: "created_at", order: "desc", role: "all" },
+          search: {
+            page: 1,
+            sortBy: "created_at",
+            order: "desc",
+            role: "all",
+            deactivated: "all",
+          },
         });
       });
     } catch (error: unknown) {
@@ -88,7 +94,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
 
         <h2 className="text-2xl font-bold mb-6">Login as admin</h2>
 
-        <form onSubmit={form.handleSubmit(handleLogin)}>
+        <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
           <Input
             label="Email"
             id="email"

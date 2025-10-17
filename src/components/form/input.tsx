@@ -1,13 +1,13 @@
 import type { ComponentProps } from "react";
 
 type InputProps = ComponentProps<"input"> & {
-  label: string;
+  label?: string;
   id: string;
   type?: string;
   error?: string;
 };
 
-export default function Input({
+export function Input({
   label,
   id,
   type = "text",
@@ -15,10 +15,12 @@ export default function Input({
   ...rest
 }: InputProps) {
   return (
-    <div className="mb-4">
-      <label htmlFor={id} className="block text-sm font-medium mb-1">
-        {label}
-      </label>
+    <div>
+      {label && (
+        <label htmlFor={id} className="block text-sm font-medium mb-1">
+          {label}
+        </label>
+      )}
       <input
         type={type}
         id={id}

@@ -1,5 +1,3 @@
-// src/components/dashboard/dashboard.tsx
-
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useUsers } from "../../http/use-users";
 import { toast } from "../toast/toast";
@@ -9,8 +7,9 @@ import { Spin } from "../spin/spin";
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardUserList } from "./dashboard-user-list";
 import { MessageCircle } from "lucide-react";
-import CreateUserModal from "../modals/create-user-modal/create-user-modal";
+import { CreateUserModal } from "../modals/create-user-modal/create-user-modal";
 import { ChatGeminiModal } from "../modals/chat-gemini-modal/chat-gemini-modal";
+import { IconButton } from "../form/icon-button";
 
 export function DashboardComponent() {
   const { user, logout } = useAuth();
@@ -113,14 +112,13 @@ export function DashboardComponent() {
         <CreateUserModal onClose={() => setShowCreateUserCard(false)} />
       )}
 
-      <button
+      <IconButton
+        icon={MessageCircle}
         onClick={toggleGeminiModal}
         className="fixed bottom-6 right-6 bg-zinc-900 hover:bg-zinc-800 text-white 
         flex justify-center items-center rounded-full p-4 shadow-lg cursor-pointer
         hover:scale-105 transition-transform border border-zinc-700"
-      >
-        <MessageCircle className="size-5" />
-      </button>
+      />
 
       {showGeminiModal && (
         <div

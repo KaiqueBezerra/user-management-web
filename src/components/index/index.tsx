@@ -1,10 +1,10 @@
 import { UserCog, UserPen, UserPlus } from "lucide-react";
 import { useState } from "react";
-import IconButton from "../form/icon-button";
+import { IconButton } from "../form/icon-button";
 import { useAuth } from "../../context/auth/use-auth";
 import { useNavigate } from "@tanstack/react-router";
-import CreateUserModal from "../modals/create-user-modal/create-user-modal";
-import LoginModal from "../modals/login-modal/login-modal";
+import { CreateUserModal } from "../modals/create-user-modal/create-user-modal";
+import { LoginModal } from "../modals/login-modal/login-modal";
 
 export function IndexComponent() {
   const { isAuthenticated } = useAuth();
@@ -33,7 +33,13 @@ export function IndexComponent() {
   const handleNavigateToDashboard = () => {
     navigate({
       to: "/dashboard",
-      search: { page: 1, sortBy: "created_at", order: "desc", role: "all" },
+      search: {
+        page: 1,
+        sortBy: "created_at",
+        order: "desc",
+        role: "all",
+        deactivated: "all",
+      },
     });
   };
 
