@@ -1,4 +1,3 @@
-// src/routes/_auth_dashboard.tsx
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardComponent } from "../components/dashboard/dashboard";
 

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import type { GetUserByEmailGeminiRequest } from "./types/get-user-by-email-gemini-request";
-import type { GetUserByEmailGeminiResponse } from "./types/get-user-by-email-gemini-response";
+import type { GetUserByEmailGeminiRequest } from "../types/users-types/get-user-by-email-gemini-request";
+import type { GetUserByEmailGeminiResponse } from "../types/users-types/get-user-by-email-gemini-response";
 
 export function useGetUserByEmailGemini() {
     return useMutation({
@@ -22,5 +22,9 @@ export function useGetUserByEmailGemini() {
 
             return result as GetUserByEmailGeminiResponse;
         },
+
+        onError: (error) => {
+            console.error("Error fetching user with Gemini:", error);
+        }
     });
 }

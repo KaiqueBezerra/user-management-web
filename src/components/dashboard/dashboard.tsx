@@ -1,5 +1,5 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useUsers } from "../../http/use-users";
+import { useUsers } from "../../http/users-functions/use-users";
 import { toast } from "../toast/toast";
 import { useAuth } from "../../context/auth/use-auth";
 import { useEffect, useState } from "react";

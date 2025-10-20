@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Send } from "lucide-react";
-import { useGetUserByEmailGemini } from "../../../http/use-get-user-by-email-gemini";
+import { useGetUserByEmailGemini } from "../../../http/users-functions/use-get-user-by-email-gemini";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -134,7 +134,7 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
         </form>
       </div>
 
-      {/* Pequena animação de entrada */}
+      {/* Animates the modal entrance */}
       <style>{`
         @keyframes slideIn {
           from {

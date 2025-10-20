@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import type { LoginRequest } from "./types/login-request";
-import type { LoginResponse } from "./types/login-response";
-import { useAuth } from "../context/auth/use-auth";
+import type { LoginRequest } from "../types/auth-types/login-request";
+import type { LoginResponse } from "../types/auth-types/login-response";
+import { useAuth } from "../../context/auth/use-auth";
 
 export function useLogin() {
     const { login } = useAuth();

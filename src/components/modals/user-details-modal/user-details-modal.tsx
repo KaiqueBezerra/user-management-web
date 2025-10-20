@@ -3,6 +3,10 @@ import { Button } from "../../form/button";
 import type { User } from "../../../context/auth/auth-context";
 import { X } from "lucide-react";
 import { UserDetailsEditModal } from "./user-details-edit-modal/user-details-edit-modal";
+import { toast } from "../../../components/toast/toast";
+import { UserStatusReasonModal } from "./user-details-status-modal/user-details-deactivation-modal";
+import { useDeactivateUser } from "../../../http/deactivations-functions/use-deactivate-user";
+import { useReactivateUser } from "../../../http/deactivations-functions/use-reactivate-user";
 
 type UserDetailsModalProps = {
   user: User;
@@ -10,16 +14,54 @@ type UserDetailsModalProps = {
 };
 
 export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
+  const { mutateAsync: deactivateUser } = useDeactivateUser(user.id);
+  const { mutateAsync: reactivateUser } = useReactivateUser(user.id);
+
   const [isEditing, setIsEditing] = useState(false);
 
+  const [statusModalOpen, setStatusModalOpen] = useState<
+    null | "deactivate" | "reactivate"
+  >(null);
+
   const modalRef = useRef<HTMLDivElement>(null);
+  const reasonModalRef = useRef<HTMLDivElement>(null);
+
+  async function handleStatusChange({ reason }: { reason: string }) {
+    try {
+      if (statusModalOpen === "deactivate") {
+        await deactivateUser({ deactivated_reason: reason });
+        toast.success("User deactivated successfully.");
+      } else if (statusModalOpen === "reactivate") {
+        await reactivateUser({ reactivated_reason: reason });
+        toast.success("User reactivated successfully.");
+      }
+      setStatusModalOpen(null);
+      onClose();
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    }
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+
+      const clickedOutsideMainModal =
+        modalRef.current && !modalRef.current.contains(target);
+      const clickedOutsideReasonModal =
+        reasonModalRef.current && !reasonModalRef.current.contains(target);
+
+      // Close only if clicked outside both modals
       if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
+        statusModalOpen &&
+        clickedOutsideMainModal &&
+        clickedOutsideReasonModal
       ) {
+        setStatusModalOpen(null);
+      }
+
+      // Close main modal if clicked outside and reason modal is not open
+      if (!statusModalOpen && clickedOutsideMainModal) {
         onClose();
       }
     }
@@ -28,7 +70,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose]);
+  }, [onClose, statusModalOpen]);
 
   return (
     <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
@@ -130,13 +172,13 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
                     <Button
                       variant="secondary"
                       text="Reactivate User"
-                      onClick={() => {}}
+                      onClick={() => setStatusModalOpen("reactivate")}
                     />
                   ) : (
                     <Button
                       variant="warning"
                       text="Deactivate User"
-                      onClick={() => {}}
+                      onClick={() => setStatusModalOpen("deactivate")}
                     />
                   )}
                   <Button
@@ -150,6 +192,15 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
           )}
         </div>
       </div>
+
+      {statusModalOpen && (
+        <UserStatusReasonModal
+          action={statusModalOpen}
+          onConfirm={handleStatusChange}
+          onClose={() => setStatusModalOpen(null)}
+          innerRef={reasonModalRef}
+        />
+      )}
     </div>
   );
 }

@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { UpdateUserRequest } from "./types/update-user-request";
-import type { UpdateUserResponse } from "./types/update-user-response";
+import type { ReactivateUserRequest } from "../types/deactivations-types/reactivate-user-request";
+import type { ReactivateUserResponse } from "../types/deactivations-types/reactivate-user-response";
 
-export function useUpdateUser(userId: string) {
+export function useReactivateUser(userId: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (data: UpdateUserRequest) => {
-            const response = await fetch(`http://localhost:3333/api/users/${userId}`, {
+        mutationFn: async (data: ReactivateUserRequest) => {
+            const response = await fetch(`http://localhost:3333/api/users/${userId}/reactivate`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -16,10 +16,10 @@ export function useUpdateUser(userId: string) {
                 body: JSON.stringify(data),
             });
 
-            const result: UpdateUserResponse = await response.json();
+            const result: ReactivateUserResponse = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || "Unknown error updating user.");
+                throw new Error(result.message || "Unknown error reactivating user.");
             }
 
             return result;
@@ -30,7 +30,7 @@ export function useUpdateUser(userId: string) {
         },
 
         onError: (error) => {
-            console.error("Error updating user:", error);
+            console.error("Error reactivating user:", error);
         }
     });
 }

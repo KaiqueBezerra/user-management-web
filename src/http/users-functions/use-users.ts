@@ -1,6 +1,5 @@
-// src/http/use-users.ts
 import { useQuery } from "@tanstack/react-query";
-import type { GetUsersResponse } from "./types/get-users-response";
+import type { GetUsersResponse } from "../types/users-types/get-users-response";
 
 export function useUsers(
     page: number,

@@ -4,7 +4,7 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../../form/input";
-import { useUpdateUser } from "../../../../http/use-update-user";
+import { useUpdateUser } from "../../../../http/users-functions/use-update-user";
 import { toast } from "../../../../components/toast/toast";
 
 interface UserDetailsEditModalProps {
@@ -68,7 +68,7 @@ export function UserDetailsEditModal({
       </div>
       <div>
         <label className="block text-sm font-medium text-zinc-300 mb-1">
-          Função
+          Role
         </label>
         <select
           id="role"

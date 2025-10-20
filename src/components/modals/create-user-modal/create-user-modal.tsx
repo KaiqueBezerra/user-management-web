@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { Input } from "../../form/input";
 import { Button } from "../../form/button";
 import z from "zod";
-import { useCreateUser } from "../../../http/use-create-user";
+import { useCreateUser } from "../../../http/users-functions/use-create-user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";

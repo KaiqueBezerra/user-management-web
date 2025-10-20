@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { Input } from "../../form/input";
 import { Button } from "../../form/button";
 import z from "zod";
-import { useLogin } from "../../../http/use-login";
+import { useLogin } from "../../../http/auth-functions/use-login";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
@@ -61,8 +61,6 @@ export function LoginModal({ onClose }: LoginModalProps) {
     }
   }
 
-  const { isSubmitting } = form.formState;
-
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -78,6 +76,8 @@ export function LoginModal({ onClose }: LoginModalProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
+
+  const { isSubmitting } = form.formState;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

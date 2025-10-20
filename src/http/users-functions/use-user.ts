@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { GetUserResponse } from "./types/get-user-response";
+import type { GetUserResponse } from "../types/users-types/get-user-response";
 
 export function useUser(userId: string) {
     return useQuery({
