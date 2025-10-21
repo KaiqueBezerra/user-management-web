@@ -24,9 +24,8 @@ export function useCreateUser() {
             return result;
         },
 
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["get-users"] });;
-            console.log("Successfully created user:", data);
         },
 
         onError: (error) => {

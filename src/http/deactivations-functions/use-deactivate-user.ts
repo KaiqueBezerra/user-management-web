@@ -25,9 +25,8 @@ export function useDeactivateUser(userId: string) {
             return result;
         },
 
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["get-users"] });;
-            console.log("Successfully deactivated user:", data);
         },
 
         onError: (error) => {

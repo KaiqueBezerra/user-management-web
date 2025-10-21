@@ -75,6 +75,9 @@ export function DashboardComponent() {
     return <Spin />;
   }
 
+  // Filter out the current user from the list
+  const filteredUsers = users.filter((u) => u.id !== user?.id);
+
   const toggleGeminiModal = () => {
     if (showGeminiModal) {
       setAnimateModal(false);
@@ -94,7 +97,7 @@ export function DashboardComponent() {
       />
 
       <DashboardUserList
-        users={users}
+        users={filteredUsers}
         page={page}
         totalPages={data?.totalPages}
         setPage={setPage}
