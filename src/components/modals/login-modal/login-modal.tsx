@@ -1,13 +1,15 @@
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
-import Input from "../../form/input";
+import { Input } from "../../form/input";
 import { Button } from "../../form/button";
 import z from "zod";
-import { useLogin } from "../../../http/use-login";
+import { useLogin } from "../../../http/auth-functions/use-login";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "../../toast/toast";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 
-interface UserCardProps {
+interface LoginModalProps {
   onClose: () => void;
 }
 
@@ -22,9 +24,12 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export default function LoginCard({ onClose }: UserCardProps) {
+export function LoginModal({ onClose }: LoginModalProps) {
   const { mutateAsync: login } = useLogin();
-  const cardRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
+  const navigate = useNavigate();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -35,14 +40,33 @@ export default function LoginCard({ onClose }: UserCardProps) {
   });
 
   async function handleLogin(data: LoginFormData) {
-    await login(data);
+    try {
+      await login(data);
+      toast.success("Login successful!");
+      onClose();
+      router.invalidate().finally(() => {
+        navigate({
+          to: "/dashboard",
+          search: {
+            page: 1,
+            sortBy: "created_at",
+            order: "desc",
+            role: "all",
+            deactivated: "all",
+          },
+        });
+      });
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    }
   }
-
-  const { isSubmitting } = form.formState;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     }
@@ -53,10 +77,12 @@ export default function LoginCard({ onClose }: UserCardProps) {
     };
   }, [onClose]);
 
+  const { isSubmitting } = form.formState;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
-        ref={cardRef}
+        ref={modalRef}
         className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"
       >
         <button
@@ -68,7 +94,7 @@ export default function LoginCard({ onClose }: UserCardProps) {
 
         <h2 className="text-2xl font-bold mb-6">Login as admin</h2>
 
-        <form onSubmit={form.handleSubmit(handleLogin)}>
+        <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
           <Input
             label="Email"
             id="email"

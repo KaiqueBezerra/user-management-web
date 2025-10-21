@@ -1,20 +1,26 @@
-export default function Input({
+import type { ComponentProps } from "react";
+
+type InputProps = ComponentProps<"input"> & {
+  label?: string;
+  id: string;
+  type?: string;
+  error?: string;
+};
+
+export function Input({
   label,
   id,
   type = "text",
   error,
   ...rest
-}: {
-  label: string;
-  id: string;
-  type?: string;
-  error?: string; // <-- aqui
-} & React.InputHTMLAttributes<HTMLInputElement>) {
+}: InputProps) {
   return (
-    <div className="mb-4">
-      <label htmlFor={id} className="block text-sm font-medium mb-1">
-        {label}
-      </label>
+    <div>
+      {label && (
+        <label htmlFor={id} className="block text-sm font-medium mb-1">
+          {label}
+        </label>
+      )}
       <input
         type={type}
         id={id}

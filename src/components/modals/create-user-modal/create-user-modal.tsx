@@ -1,14 +1,16 @@
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
-import Input from "../../form/input";
+import { Input } from "../../form/input";
 import { Button } from "../../form/button";
 import z from "zod";
-import { useCreateUser } from "../../../http/use-create-user";
+import { useCreateUser } from "../../../http/users-functions/use-create-user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "../../../context/auth/use-auth";
 
-interface UserCardProps {
+interface UserModalProps {
   onClose: () => void;
 }
 
@@ -25,10 +27,14 @@ const createUserSchema = z.object({
 
 type CreateUserFormData = z.infer<typeof createUserSchema>;
 
-export default function CreateUserCard({ onClose }: UserCardProps) {
+export function CreateUserModal({ onClose }: UserModalProps) {
   const { mutateAsync: createUser } = useCreateUser();
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
+
+  const { isAuthenticated } = useAuth();
 
   const form = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
@@ -45,6 +51,18 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
       await createUser(data);
       toast.success("User created successfully!");
       onClose();
+      if (isAuthenticated) {
+        navigate({
+          to: "/dashboard",
+          search: {
+            page: 1,
+            sortBy: "created_at",
+            order: "desc",
+            role: "all",
+            deactivated: "all",
+          },
+        });
+      }
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : String(error));
     }
@@ -52,7 +70,10 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     }
@@ -66,9 +87,9 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
   const { isSubmitting } = form.formState;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
       <div
-        ref={cardRef}
+        ref={modalRef}
         className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"
       >
         <button
@@ -80,7 +101,10 @@ export default function CreateUserCard({ onClose }: UserCardProps) {
 
         <h2 className="text-2xl font-bold mb-6">Create new user</h2>
 
-        <form onSubmit={form.handleSubmit(handleCreateUser)}>
+        <form
+          onSubmit={form.handleSubmit(handleCreateUser)}
+          className="space-y-4"
+        >
           <Input
             label="Name"
             id="name"

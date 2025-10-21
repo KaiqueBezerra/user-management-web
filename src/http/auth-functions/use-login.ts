@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import type { LoginRequest } from "./types/login-request";
-import type { LoginResponse } from "./types/login-response";
+import type { LoginRequest } from "../types/auth-types/login-request";
+import type { LoginResponse } from "../types/auth-types/login-response";
+import { useAuth } from "../../context/auth/use-auth";
 
 export function useLogin() {
-    // const queryClient = useQueryClient();
+    const { login } = useAuth();
 
     return useMutation({
         mutationFn: async (data: LoginRequest) => {
@@ -18,7 +19,6 @@ export function useLogin() {
             const result: LoginResponse = await response.json();
 
             if (!response.ok) {
-                // Lança um erro personalizado contendo a mensagem do backend
                 throw new Error(result.message || "Unknown error logging in.");
             }
 
@@ -26,12 +26,7 @@ export function useLogin() {
         },
 
         onSuccess: (data) => {
-            if (data && data.token) {
-                // Armazene o token no localStorage (ou sessionStorage)
-                localStorage.setItem("authToken", data.token);
-                // Aqui você pode configurar algo para disparar quando o login for bem-sucedido (como redirecionamento)
-                console.log("Successfully stored token:", data.token);
-            }
+            login(data.token);
         },
 
         onError: (error) => {
