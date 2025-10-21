@@ -7,6 +7,7 @@ import { toast } from "../../../components/toast/toast";
 import { UserStatusReasonModal } from "./user-details-status-modal/user-details-deactivation-modal";
 import { useDeactivateUser } from "../../../http/deactivations-functions/use-deactivate-user";
 import { useReactivateUser } from "../../../http/deactivations-functions/use-reactivate-user";
+import { useDeleteUser } from "../../../http/users-functions/use-delete-user";
 
 type UserDetailsModalProps = {
   user: User;
@@ -16,6 +17,7 @@ type UserDetailsModalProps = {
 export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
   const { mutateAsync: deactivateUser } = useDeactivateUser(user.id);
   const { mutateAsync: reactivateUser } = useReactivateUser(user.id);
+  const { mutateAsync: deleteUser } = useDeleteUser(user.id);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -36,6 +38,24 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
         toast.success("User reactivated successfully.");
       }
       setStatusModalOpen(null);
+      onClose();
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  async function handleDeleteUser() {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this user? This action cannot be undone and history of this user will be lost."
+    );
+
+    if (!confirm) {
+      return;
+    }
+
+    try {
+      await deleteUser();
+      toast.success("User deleted successfully.");
       onClose();
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : String(error));
@@ -184,7 +204,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
                   <Button
                     variant="danger"
                     text="Delete User"
-                    onClick={() => {}}
+                    onClick={handleDeleteUser}
                   />
                 </div>
               </div>

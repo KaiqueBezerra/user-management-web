@@ -17,7 +17,7 @@ export function useGetUserByEmailGemini() {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.message || "Erro ao buscar usuário com Gemini");
+                throw new Error(result.message || "Error fetching user with Gemini");
             }
 
             return result as GetUserByEmailGeminiResponse;

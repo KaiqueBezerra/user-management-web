@@ -32,12 +32,13 @@ export function useUsers(
                 }
             );
 
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error("Failed to fetch users");
+                throw new Error(result.message || "Error fetching users");
             }
 
-            const result: GetUsersResponse = await response.json();
-            return result;
+            return result as GetUsersResponse
         },
     });
 }
