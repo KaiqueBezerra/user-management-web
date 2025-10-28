@@ -4,6 +4,7 @@ import { DashboardPagination } from "./dashboard-pagination";
 import { DashboardUserListItem } from "./dashboard-user-list-item";
 import { DashboardFilters } from "./dashboard-filters";
 import { UserDetailsModal } from "../modals/user-details-modal/user-details-modal";
+import { UserDeactivationHistoryModal } from "../modals/user-deactivation-history-modal/user-deactivation-history-modal";
 
 export function DashboardUserList({
   users,
@@ -33,6 +34,7 @@ export function DashboardUserList({
   setDeactivated: (value: "true" | "false" | "all") => void;
 }) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [historyUser, setHistoryUser] = useState<User | null>(null);
 
   return (
     <div className="bg-zinc-900 border border-zinc-700 rounded-lg shadow-md p-6">
@@ -65,7 +67,7 @@ export function DashboardUserList({
                 Updated At
               </th>
               <th className="py-2 px-4 text-left text-sm font-medium">
-                Deactivated
+                Status
               </th>
             </tr>
           </thead>
@@ -75,6 +77,7 @@ export function DashboardUserList({
                 key={user.id}
                 user={user}
                 onClick={() => setSelectedUser(user)}
+                onViewHistory={() => setHistoryUser(user)}
               />
             ))}
           </tbody>
@@ -91,6 +94,13 @@ export function DashboardUserList({
         <UserDetailsModal
           user={selectedUser}
           onClose={() => setSelectedUser(null)}
+        />
+      )}
+
+      {historyUser && (
+        <UserDeactivationHistoryModal
+          user={historyUser}
+          onClose={() => setHistoryUser(null)}
         />
       )}
     </div>
