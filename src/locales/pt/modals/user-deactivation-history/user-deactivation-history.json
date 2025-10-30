@@ -1,0 +1,8 @@
+{
+  "title": "Histórico de Desativação do Usuário",
+  "reason": "Motivo",
+  "by": "Por",
+  "deactivated": "Usuário desativado",
+  "reactivated": "Usuário reativado",
+  "noHistoryFound": "Nenhum histórico de desativação encontrado para este usuário."
+}

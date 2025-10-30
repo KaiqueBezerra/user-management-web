@@ -1,0 +1,12 @@
+{
+  "deactivated.all": "All",
+  "deactivated.deactivated": "Deactivated",
+  "deactivated.active": "Active",
+  "role.all": "All",
+  "role.user": "User",
+  "role.admin": "Admin",
+  "sortBy.created_at": "Created At",
+  "sortBy.updated_at": "Updated At",
+  "order.asc": "Ascending",
+  "order.desc": "Descending"
+}

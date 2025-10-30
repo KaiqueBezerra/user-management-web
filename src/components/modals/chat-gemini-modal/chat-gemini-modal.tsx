@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IconButton } from "../../form/icon-button";
 import { Input } from "../../form/input";
 
+import { useTranslation } from "react-i18next";
+
 type Message = {
   from: "user" | "ai";
   text: string;
@@ -19,10 +21,12 @@ const chatGeminiSchema = z.object({
 type ChatGeminiFormData = z.infer<typeof chatGeminiSchema>;
 
 export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation("chatGemini");
+
   const [messages, setMessages] = useState<Message[]>([
     {
       from: "ai",
-      text: "Hello! 😊 Enter an email below to search for the user.",
+      text: t("welcome"),
     },
   ]);
 
@@ -45,11 +49,14 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
         ...prev,
         {
           from: "ai",
-          text: `${result.message}\n\n👤 Name: ${result.user.name}\n📧 Email: ${
-            result.user.email
-          }\n🧩 Role: ${result.user.role}\n🗃️ Deactivated: ${
-            result.user.deactivated ? "Deactivated" : "Active"
-          }`,
+          text: t("userInfo", {
+            name: result.user.name,
+            email: result.user.email,
+            role: result.user.role === "admin" ? t("admin") : t("user"),
+            deactivated: result.user.deactivated
+              ? t("deactivated")
+              : t("active"),
+          }),
         },
       ]);
     } catch (error: unknown) {
@@ -70,7 +77,7 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
       <div className="bg-zinc-950 border border-zinc-800 rounded-2xl shadow-xl w-[360px] h-[460px] flex flex-col text-white relative">
         {/* Header */}
         <div className="p-4 border-b border-zinc-800 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Chat with AI (Gemini)</h2>
+          <h2 className="text-lg font-semibold">{t("title")}</h2>
           <button
             onClick={onClose}
             className="text-zinc-400 hover:text-white transition cursor-pointer"
@@ -100,7 +107,7 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
             </div>
           ))}
           {isSubmitting && (
-            <div className="text-zinc-500 text-sm">AI is thinking...</div>
+            <div className="text-zinc-500 text-sm">{t("thinking")}</div>
           )}
         </div>
 
@@ -114,7 +121,7 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter an email..."
+                placeholder={t("emailPlaceholder")}
                 {...form.register("email")}
                 disabled={isSubmitting}
               />

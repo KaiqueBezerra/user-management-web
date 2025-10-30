@@ -1,0 +1,9 @@
+{
+  "name": "Name",
+  "email": "Email",
+  "role": "Role",
+  "user": "User",
+  "admin": "Admin",
+  "cancel": "Cancel",
+  "update": "Update"
+}

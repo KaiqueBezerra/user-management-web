@@ -9,12 +9,16 @@ import { useDeactivateUser } from "../../../http/deactivations-functions/use-dea
 import { useReactivateUser } from "../../../http/deactivations-functions/use-reactivate-user";
 import { useDeleteUser } from "../../../http/users-functions/use-delete-user";
 
+import { useTranslation } from "react-i18next";
+
 type UserDetailsModalProps = {
   user: User;
   onClose: () => void;
 };
 
 export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
+  const { t } = useTranslation("userDetails");
+
   const { mutateAsync: deactivateUser } = useDeactivateUser(user.id);
   const { mutateAsync: reactivateUser } = useReactivateUser(user.id);
   const { mutateAsync: deleteUser } = useDeleteUser(user.id);
@@ -32,10 +36,10 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
     try {
       if (statusModalOpen === "deactivate") {
         await deactivateUser({ deactivated_reason: reason });
-        toast.success("User deactivated successfully.");
+        toast.success(t("deactivatedSuccess"));
       } else if (statusModalOpen === "reactivate") {
         await reactivateUser({ reactivated_reason: reason });
-        toast.success("User reactivated successfully.");
+        toast.success(t("reactivatedSuccess"));
       }
       setStatusModalOpen(null);
       onClose();
@@ -45,9 +49,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
   }
 
   async function handleDeleteUser() {
-    const confirm = window.confirm(
-      "Are you sure you want to delete this user? This action cannot be undone and history of this user will be lost."
-    );
+    const confirm = window.confirm(t("deleteConfirm"));
 
     if (!confirm) {
       return;
@@ -55,7 +57,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
 
     try {
       await deleteUser();
-      toast.success("User deleted successfully.");
+      toast.success(t("deletedSuccess"));
       onClose();
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : String(error));
@@ -99,7 +101,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
         ref={modalRef}
       >
         <div className="flex justify-between items-center border-b border-zinc-700 p-4">
-          <h2 className="text-xl font-semibold">User Details</h2>
+          <h2 className="text-xl font-semibold">{t("title")}</h2>
           <button
             onClick={onClose}
             className="text-white cursor-pointer top-4 right-4 hover:text-zinc-600"
@@ -123,7 +125,9 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
                   <p className="mt-1 text-sm text-white">{user.id}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-zinc-400">Status</h3>
+                  <h3 className="text-sm font-medium text-zinc-400">
+                    {t("status")}
+                  </h3>
                   <p className="mt-1">
                     <span
                       className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
@@ -132,20 +136,26 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
                           : "bg-green-300 text-green-900"
                       }`}
                     >
-                      {user.deactivated ? "Deactivated" : "Active"}
+                      {user.deactivated ? t("deactivated") : t("active")}
                     </span>
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-zinc-400">Name</h3>
+                  <h3 className="text-sm font-medium text-zinc-400">
+                    {t("name")}
+                  </h3>
                   <p className="mt-1 text-sm text-white">{user.name}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-zinc-400">Email</h3>
+                  <h3 className="text-sm font-medium text-zinc-400">
+                    {t("email")}
+                  </h3>
                   <p className="mt-1 text-sm text-white">{user.email}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-zinc-400">Role</h3>
+                  <h3 className="text-sm font-medium text-zinc-400">
+                    {t("role")}
+                  </h3>
                   <p className="mt-1">
                     <span
                       className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
@@ -154,13 +164,13 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
                           : "bg-blue-300 text-blue-900"
                       }`}
                     >
-                      {user.role === "admin" ? "Admin" : "User"}
+                      {user.role === "admin" ? t("adminRole") : t("userRole")}
                     </span>
                   </p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-zinc-400">
-                    Created At
+                    {t("createdAt")}
                   </h3>
                   <p className="mt-1 text-sm text-white">
                     {new Date(user.created_at).toLocaleDateString("pt-BR")}
@@ -168,7 +178,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-zinc-400">
-                    Updated At
+                    {t("updatedAt")}
                   </h3>
                   <p className="mt-1 text-sm text-white">
                     {user.updated_at
@@ -180,30 +190,30 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
 
               <div className="border-t border-zinc-700 pt-4">
                 <h3 className="text-sm font-medium text-zinc-300 mb-3">
-                  Actions
+                  {t("actions")}
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   <Button
                     variant="primary"
-                    text="Edit User"
+                    text={t("editUser")}
                     onClick={() => setIsEditing(true)}
                   />
                   {user.deactivated ? (
                     <Button
                       variant="secondary"
-                      text="Reactivate User"
+                      text={t("reactivateUser")}
                       onClick={() => setStatusModalOpen("reactivate")}
                     />
                   ) : (
                     <Button
                       variant="warning"
-                      text="Deactivate User"
+                      text={t("deactivateUser")}
                       onClick={() => setStatusModalOpen("deactivate")}
                     />
                   )}
                   <Button
                     variant="danger"
-                    text="Delete User"
+                    text={t("deleteUser")}
                     onClick={handleDeleteUser}
                   />
                 </div>

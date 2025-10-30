@@ -1,0 +1,9 @@
+{
+  "reason": "Motivo",
+  "enterReason": "Digite o motivo...",
+  "cancel": "Cancelar",
+  "deactivate": "Desativar",
+  "reactivate": "Ativar",
+  "deactivateUser": "Desativar Usuário",
+  "reactivateUser": "Ativar Usuário"
+}

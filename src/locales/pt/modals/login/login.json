@@ -1,0 +1,7 @@
+{
+  "loginTitle": "Login como administrador",
+  "emailLabel": "Email",
+  "passwordLabel": "Senha",
+  "loginButton": "Entrar",
+  "loginSuccess": "Login bem-sucedido!"
+}

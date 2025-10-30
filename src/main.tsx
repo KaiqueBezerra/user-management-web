@@ -6,6 +6,8 @@ import { routeTree } from "./routeTree.gen";
 import "./index.css";
 import { App } from "./app";
 
+import "./i18n";
+
 // Set up a Router instance
 export const router = createRouter({
   routeTree,

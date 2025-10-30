@@ -1,0 +1,9 @@
+{
+  "title": "User List",
+  "name": "Name",
+  "email": "Email",
+  "role": "Role",
+  "createdAt": "Created at",
+  "updatedAt": "Updated at",
+  "status": "Status"
+}

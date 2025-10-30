@@ -6,7 +6,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { CreateUserModal } from "../modals/create-user-modal/create-user-modal";
 import { LoginModal } from "../modals/login-modal/login-modal";
 
+import { useTranslation } from "react-i18next";
+
 export function IndexComponent() {
+  const { t } = useTranslation("index");
+
   const { isAuthenticated } = useAuth();
 
   const [showCreateUserCard, setShowCreateUserCard] = useState(false);
@@ -48,23 +52,21 @@ export function IndexComponent() {
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="flex items-center gap-2 px-4 py-2">
           <UserCog className="size-8" />
-          <h1 className="text-lg font-bold sm:text-3xl">User Menagement</h1>
+          <h1 className="text-lg font-bold sm:text-3xl">{t("title")}</h1>
         </div>
 
-        <p className="text-zinc-400 max-sm:text-sm">
-          Edit user information, manage roles, and more.
-        </p>
+        <p className="text-zinc-400 max-sm:text-sm">{t("description")}</p>
 
         <div className="flex items-center gap-2 mt-6">
           <IconButton
             icon={UserPlus}
-            text="Create User"
+            text={t("createUserButton")}
             onClick={handleCreateUserClick}
             variant="primary"
           />
           <IconButton
             icon={UserPen}
-            text="Manage Users"
+            text={t("manageUsersButton")}
             onClick={
               !isAuthenticated ? handleLoginClick : handleNavigateToDashboard
             }

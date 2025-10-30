@@ -6,6 +6,8 @@ import { DashboardFilters } from "./dashboard-filters";
 import { UserDetailsModal } from "../modals/user-details-modal/user-details-modal";
 import { UserDeactivationHistoryModal } from "../modals/user-deactivation-history-modal/user-deactivation-history-modal";
 
+import { useTranslation } from "react-i18next";
+
 export function DashboardUserList({
   users,
   page,
@@ -33,13 +35,15 @@ export function DashboardUserList({
   deactivated: "true" | "false" | "all";
   setDeactivated: (value: "true" | "false" | "all") => void;
 }) {
+  const { t } = useTranslation("dashboardUserList");
+
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [historyUser, setHistoryUser] = useState<User | null>(null);
 
   return (
     <div className="bg-zinc-900 border border-zinc-700 rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">User List</h2>
+        <h2 className="text-xl font-semibold">{t("title")}</h2>
 
         <DashboardFilters
           sortBy={sortBy}
@@ -57,17 +61,23 @@ export function DashboardUserList({
         <table className="min-w-full bg-zinc-900">
           <thead className="bg-zinc-800">
             <tr>
-              <th className="py-2 px-4 text-left text-sm font-medium">Name</th>
-              <th className="py-2 px-4 text-left text-sm font-medium">Email</th>
-              <th className="py-2 px-4 text-left text-sm font-medium">Role</th>
               <th className="py-2 px-4 text-left text-sm font-medium">
-                Created At
+                {t("name")}
               </th>
               <th className="py-2 px-4 text-left text-sm font-medium">
-                Updated At
+                {t("email")}
               </th>
               <th className="py-2 px-4 text-left text-sm font-medium">
-                Status
+                {t("role")}
+              </th>
+              <th className="py-2 px-4 text-left text-sm font-medium">
+                {t("createdAt")}
+              </th>
+              <th className="py-2 px-4 text-left text-sm font-medium">
+                {t("updatedAt")}
+              </th>
+              <th className="py-2 px-4 text-left text-sm font-medium">
+                {t("status")}
               </th>
             </tr>
           </thead>

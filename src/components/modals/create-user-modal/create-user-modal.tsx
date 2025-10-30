@@ -10,6 +10,8 @@ import { toast } from "../../toast/toast";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../../context/auth/use-auth";
 
+import { useTranslation } from "react-i18next";
+
 interface UserModalProps {
   onClose: () => void;
 }
@@ -28,6 +30,8 @@ const createUserSchema = z.object({
 type CreateUserFormData = z.infer<typeof createUserSchema>;
 
 export function CreateUserModal({ onClose }: UserModalProps) {
+  const { t } = useTranslation("createUser");
+
   const { mutateAsync: createUser } = useCreateUser();
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -49,7 +53,7 @@ export function CreateUserModal({ onClose }: UserModalProps) {
   async function handleCreateUser(data: CreateUserFormData) {
     try {
       await createUser(data);
-      toast.success("User created successfully!");
+      toast.success(t("createUserSuccess"));
       onClose();
       if (isAuthenticated) {
         navigate({
@@ -99,28 +103,28 @@ export function CreateUserModal({ onClose }: UserModalProps) {
           <X size={20} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">Create new user</h2>
+        <h2 className="text-2xl font-bold mb-6">{t("createUserTitle")}</h2>
 
         <form
           onSubmit={form.handleSubmit(handleCreateUser)}
           className="space-y-4"
         >
           <Input
-            label="Name"
+            label={t("nameLabel")}
             id="name"
             {...form.register("name")}
             error={form.formState.errors.name?.message}
           />
 
           <Input
-            label="Email"
+            label={t("emailLabel")}
             id="email"
             {...form.register("email")}
             error={form.formState.errors.email?.message}
           />
 
           <Input
-            label="Password"
+            label={t("passwordLabel")}
             id="password"
             {...form.register("password")}
             error={form.formState.errors.password?.message}
@@ -129,7 +133,7 @@ export function CreateUserModal({ onClose }: UserModalProps) {
 
           <div className="mb-6">
             <label htmlFor="role" className="block text-sm font-medium mb-1">
-              Role
+              {t("roleLabel")}
             </label>
             <select
               id="role"
@@ -137,8 +141,8 @@ export function CreateUserModal({ onClose }: UserModalProps) {
               className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md 
               focus:outline-none focus:ring-2 focus:ring-zinc-400"
             >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
+              <option value="user">{t("userRole")}</option>
+              <option value="admin">{t("adminRole")}</option>
             </select>
             <span className="text-red-500 text-sm">
               {form.formState.errors.role?.message}
@@ -147,7 +151,7 @@ export function CreateUserModal({ onClose }: UserModalProps) {
 
           <div className="flex justify-end">
             <Button
-              text="Cancel"
+              text={t("cancelButton")}
               onClick={onClose}
               variant="secondary"
               className="mr-2"
@@ -155,7 +159,7 @@ export function CreateUserModal({ onClose }: UserModalProps) {
               disabled={isSubmitting}
             />
             <Button
-              text="Create User"
+              text={t("createUserButton")}
               type="submit"
               variant="primary"
               disabled={isSubmitting}

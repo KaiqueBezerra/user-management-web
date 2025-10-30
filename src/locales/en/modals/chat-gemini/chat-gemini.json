@@ -1,0 +1,11 @@
+{
+  "title": "Chat with AI (Gemini)",
+  "welcome": "Hello! 😊 Enter an email below to search for the user.",
+  "emailPlaceholder": "Enter an email...",
+  "thinking": "AI is thinking...",
+  "userInfo": "👤 Name: {{name}}\n📧 Email: {{email}}\n🧩 Role: {{role}}\n🗃️ Status: {{deactivated}}",
+  "user": "User",
+  "admin": "Admin",
+  "deactivated": "Deactivated",
+  "active": "Active"
+}

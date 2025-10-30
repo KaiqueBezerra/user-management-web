@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 
+import { useTranslation } from "react-i18next";
+
 interface LoginModalProps {
   onClose: () => void;
 }
@@ -25,6 +27,8 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginModal({ onClose }: LoginModalProps) {
+  const { t } = useTranslation("login");
+
   const { mutateAsync: login } = useLogin();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +46,7 @@ export function LoginModal({ onClose }: LoginModalProps) {
   async function handleLogin(data: LoginFormData) {
     try {
       await login(data);
-      toast.success("Login successful!");
+      toast.success(t("loginSuccess"));
       onClose();
       router.invalidate().finally(() => {
         navigate({
@@ -92,18 +96,18 @@ export function LoginModal({ onClose }: LoginModalProps) {
           <X size={20} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">Login as admin</h2>
+        <h2 className="text-2xl font-bold mb-6">{t("loginTitle")}</h2>
 
         <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
           <Input
-            label="Email"
+            label={t("emailLabel")}
             id="email"
             {...form.register("email")}
             error={form.formState.errors.email?.message}
           />
 
           <Input
-            label="Password"
+            label={t("passwordLabel")}
             id="password"
             type="password"
             {...form.register("password")}
@@ -112,7 +116,7 @@ export function LoginModal({ onClose }: LoginModalProps) {
 
           <div className="flex">
             <Button
-              text="Login"
+              text={t("loginButton")}
               type="submit"
               variant="primary"
               fullWidth

@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../../form/input";
 import { Button } from "../../../form/button";
 
+import { useTranslation } from "react-i18next";
+
 const reasonSchema = z.object({
   reason: z.string().min(3, "Reason must be at least 3 characters"),
 });
@@ -23,6 +25,8 @@ export function UserStatusReasonModal({
   onClose,
   innerRef,
 }: UserStatusReasonModalProps) {
+  const { t } = useTranslation("userDetailsStatus");
+
   const form = useForm<ReasonFormData>({
     resolver: zodResolver(reasonSchema),
     defaultValues: { reason: "" },
@@ -42,27 +46,27 @@ export function UserStatusReasonModal({
         ref={innerRef}
       >
         <h2 className="text-xl font-semibold mb-4">
-          {action === "deactivate" ? "Deactivate User" : "Reactivate User"}
+          {action === "deactivate" ? t("deactivateUser") : t("reactivateUser")}
         </h2>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <Input
             id="reason"
-            label="Reason"
+            label={t("reason")}
             {...register("reason")}
             error={errors.reason?.message}
-            placeholder="Enter the reason..."
+            placeholder={t("enterReason")}
           />
           <div className="flex justify-end gap-2">
             <Button
               type="button"
               variant="secondary"
               onClick={onClose}
-              text="Cancel"
+              text={t("cancel")}
             />
             <Button
               type="submit"
               variant={action === "deactivate" ? "warning" : "primary"}
-              text={action === "deactivate" ? "Deactivate" : "Reactivate"}
+              text={action === "deactivate" ? t("deactivate") : t("reactivate")}
               disabled={isSubmitting}
             />
           </div>

@@ -1,0 +1,6 @@
+{
+  "title": "User Management",
+  "description": "Edit user information, manage roles, and more.",
+  "createUserButton": "Create User",
+  "manageUsersButton": "Manage Users"
+}

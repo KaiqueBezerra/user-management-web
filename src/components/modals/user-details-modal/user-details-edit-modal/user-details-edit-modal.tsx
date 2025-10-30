@@ -7,6 +7,8 @@ import { Input } from "../../../form/input";
 import { useUpdateUser } from "../../../../http/users-functions/use-update-user";
 import { toast } from "../../../../components/toast/toast";
 
+import { useTranslation } from "react-i18next";
+
 interface UserDetailsEditModalProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
@@ -26,6 +28,8 @@ export function UserDetailsEditModal({
   onClose,
   user,
 }: UserDetailsEditModalProps) {
+  const { t } = useTranslation("userDetailsEdit");
+
   const { mutateAsync: updateUser } = useUpdateUser(user.id);
 
   const form = useForm<EditUserFormData>({
@@ -40,7 +44,7 @@ export function UserDetailsEditModal({
   async function handleUpdateUser(data: EditUserFormData) {
     try {
       await updateUser(data);
-      toast.success("User updated successfully!");
+      toast.success(t("userUpdatedSuccessfully"));
       setIsEditing(false);
       onClose();
     } catch (error: unknown) {
@@ -52,7 +56,7 @@ export function UserDetailsEditModal({
     <form onSubmit={form.handleSubmit(handleUpdateUser)} className="space-y-4">
       <div>
         <Input
-          label="Name"
+          label={t("name")}
           id="name"
           {...form.register("name")}
           error={form.formState.errors.name?.message}
@@ -60,7 +64,7 @@ export function UserDetailsEditModal({
       </div>
       <div>
         <Input
-          label="Email"
+          label={t("email")}
           id="email"
           {...form.register("email")}
           error={form.formState.errors.email?.message}
@@ -68,15 +72,15 @@ export function UserDetailsEditModal({
       </div>
       <div>
         <label className="block text-sm font-medium text-zinc-300 mb-1">
-          Role
+          {t("role")}
         </label>
         <select
           id="role"
           {...form.register("role")}
           className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-white"
         >
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
+          <option value="user">{t("user")}</option>
+          <option value="admin">{t("admin")}</option>
         </select>
         <span className="text-red-500 text-sm">
           {form.formState.errors.role?.message}
@@ -85,10 +89,10 @@ export function UserDetailsEditModal({
       <div className="flex justify-end space-x-3 pt-4">
         <Button
           variant="secondary"
-          text="Cancel"
+          text={t("cancel")}
           onClick={() => setIsEditing(false)}
         />
-        <Button variant="primary" text="Update" type="submit" />
+        <Button variant="primary" text={t("update")} type="submit" />
       </div>
     </form>
   );

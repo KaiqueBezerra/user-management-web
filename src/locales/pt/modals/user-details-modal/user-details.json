@@ -1,0 +1,21 @@
+{
+  "title": "Detalhes do Usuário",
+  "name": "Nome",
+  "email": "Email",
+  "role": "Função",
+  "adminRole": "Admin",
+  "userRole": "Usuário",
+  "deactivatedSuccess": "Usuário desativado com sucesso",
+  "reactivatedSuccess": "Usuário reativado com sucesso",
+  "createdAt": "Criado em",
+  "updatedAt": "Atualizado em",
+  "editUser": "Editar usuário",
+  "reactivateUser": "Reativar usuário",
+  "deactivateUser": "Desativar usuário",
+  "deleteUser": "Deletar usuário",
+  "active": "Ativo",
+  "deactivated": "Desativado",
+  "actions": "Ações",
+  "deletedSuccess": "Usuário deletado com sucesso",
+  "deleteConfirm": "Tem certeza que deseja deletar este usuário? Esta ação não pode ser desfeita."
+}

@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGetUserDeactivationHistory } from "../../../http/deactivation-history-functions/use-get-deactivation-history";
 import { useEffect, useRef } from "react";
 
+import { useTranslation } from "react-i18next";
+
 export function UserDeactivationHistoryModal({
   user,
   onClose,
@@ -10,6 +12,8 @@ export function UserDeactivationHistoryModal({
   user: { id: string; name: string };
   onClose: () => void;
 }) {
+  const { t } = useTranslation("userDeactivationHistory");
+
   const { data, isLoading, isError } = useGetUserDeactivationHistory(user.id);
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -55,23 +59,19 @@ export function UserDeactivationHistoryModal({
           </button>
 
           <h2 className="text-lg font-semibold mb-6">
-            Deactivation History — {user.name}
+            {t("title", { name: user.name })}
           </h2>
 
           {isLoading && <p className="text-zinc-400">Loading history...</p>}
           {isError && <p className="text-red-400">Failed to load history.</p>}
 
-          {!data && (
-            <p className="text-zinc-400">
-              No deactivation history found for this user.
-            </p>
-          )}
+          {!data && <p className="text-zinc-400">{t("noHistoryFound")}</p>}
 
           {data && Array.isArray(data.deactivation_dates) && (
             <>
               {data.deactivation_dates.length === 0 ? (
                 <p className="text-zinc-400">
-                  No deactivation history found for this user.
+                  {t("noDeactivationHistoryFound")}
                 </p>
               ) : (
                 <div className="relative border-l border-zinc-700 pl-6 space-y-6">
@@ -90,14 +90,14 @@ export function UserDeactivationHistoryModal({
                           {new Date(date).toLocaleDateString("pt-BR")}
                         </p>
                         <p className="font-semibold text-red-400 mb-1">
-                          User deactivated
+                          {t("deactivated")}
                         </p>
                         <p className="text-sm text-zinc-300">
-                          <strong>Reason:</strong>{" "}
+                          <strong>{t("reason")}:</strong>{" "}
                           {data.deactivation_reasons[index] || "—"}
                         </p>
                         <p className="text-sm text-zinc-300">
-                          <strong>By:</strong>{" "}
+                          <strong>{t("by")}:</strong>{" "}
                           {data.deactivations_by_admin[index] ||
                             "Administrator"}
                         </p>
@@ -119,14 +119,14 @@ export function UserDeactivationHistoryModal({
                               ).toLocaleDateString("pt-BR")}
                             </p>
                             <p className="font-semibold text-green-400 mb-1">
-                              User reactivated
+                              {t("reactivated")}
                             </p>
                             <p className="text-sm text-zinc-300">
-                              <strong>Reason:</strong>{" "}
+                              <strong>{t("reason")}:</strong>{" "}
                               {data.reactivation_reasons?.[index] || "—"}
                             </p>
                             <p className="text-sm text-zinc-300">
-                              <strong>By:</strong>{" "}
+                              <strong>{t("by")}:</strong>{" "}
                               {data.reactivations_by_admin?.[index] ||
                                 "Administrator"}
                             </p>

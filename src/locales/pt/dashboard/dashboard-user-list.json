@@ -1,0 +1,9 @@
+{
+  "title": "Lista de Usuários",
+  "name": "Nome",
+  "email": "Email",
+  "role": "Função",
+  "createdAt": "Criado em",
+  "updatedAt": "Atualizado em",
+  "status": "Status"
+}

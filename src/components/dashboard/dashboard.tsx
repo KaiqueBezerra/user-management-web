@@ -11,7 +11,11 @@ import { CreateUserModal } from "../modals/create-user-modal/create-user-modal";
 import { ChatGeminiModal } from "../modals/chat-gemini-modal/chat-gemini-modal";
 import { IconButton } from "../form/icon-button";
 
+import { useTranslation } from "react-i18next";
+
 export function DashboardComponent() {
+  const { t } = useTranslation("dashboard");
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -56,7 +60,7 @@ export function DashboardComponent() {
   function handleLogout() {
     logout();
     navigate({ to: "/" });
-    toast.success("Logout successful!");
+    toast.success(t("logoutSuccess"));
   }
 
   useEffect(() => {

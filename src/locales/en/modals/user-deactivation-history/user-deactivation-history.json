@@ -1,0 +1,8 @@
+{
+  "title": "User Deactivation History",
+  "reason": "Reason",
+  "by": "By",
+  "deactivated": "User deactivated",
+  "reactivated": "User reactivated",
+  "noHistoryFound": "No deactivation history found for this user."
+}

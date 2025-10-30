@@ -1,0 +1,12 @@
+{
+  "createUserTitle": "Criar Usuário",
+  "nameLabel": "Nome",
+  "emailLabel": "Email",
+  "passwordLabel": "Senha",
+  "roleLabel": "Função",
+  "userRole": "Usuário",
+  "adminRole": "Admin",
+  "cancelButton": "Cancelar",
+  "createUserButton": "Criar Usuário",
+  "createUserSuccess": "Usuário criado com sucesso!"
+}
