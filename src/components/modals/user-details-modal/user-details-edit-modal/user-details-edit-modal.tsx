@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from "framer-motion";
 import type { User } from "../../../../context/auth/auth-context";
 import { Button } from "../../../form/button";
 import z from "zod";
@@ -6,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../../form/input";
 import { useUpdateUser } from "../../../../http/users-functions/use-update-user";
 import { toast } from "../../../../components/toast/toast";
-
 import { useTranslation } from "react-i18next";
 
 interface UserDetailsEditModalProps {
@@ -53,47 +53,57 @@ export function UserDetailsEditModal({
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleUpdateUser)} className="space-y-4">
-      <div>
-        <Input
-          label={t("name")}
-          id="name"
-          {...form.register("name")}
-          error={form.formState.errors.name?.message}
-        />
-      </div>
-      <div>
-        <Input
-          label={t("email")}
-          id="email"
-          {...form.register("email")}
-          error={form.formState.errors.email?.message}
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-zinc-300 mb-1">
-          {t("role")}
-        </label>
-        <select
-          id="role"
-          {...form.register("role")}
-          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-white"
-        >
-          <option value="user">{t("user")}</option>
-          <option value="admin">{t("admin")}</option>
-        </select>
-        <span className="text-red-500 text-sm">
-          {form.formState.errors.role?.message}
-        </span>
-      </div>
-      <div className="flex justify-end space-x-3 pt-4">
-        <Button
-          variant="secondary"
-          text={t("cancel")}
-          onClick={() => setIsEditing(false)}
-        />
-        <Button variant="primary" text={t("update")} type="submit" />
-      </div>
-    </form>
+    <AnimatePresence mode="wait">
+      <motion.form
+        key="edit-modal"
+        onSubmit={form.handleSubmit(handleUpdateUser)}
+        className="space-y-4"
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 40, scale: 0.95 }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+      >
+        <div>
+          <Input
+            label={t("name")}
+            id="name"
+            {...form.register("name")}
+            error={form.formState.errors.name?.message}
+          />
+        </div>
+        <div>
+          <Input
+            label={t("email")}
+            id="email"
+            {...form.register("email")}
+            error={form.formState.errors.email?.message}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-zinc-300 mb-1">
+            {t("role")}
+          </label>
+          <select
+            id="role"
+            {...form.register("role")}
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md text-white"
+          >
+            <option value="user">{t("user")}</option>
+            <option value="admin">{t("admin")}</option>
+          </select>
+          <span className="text-red-500 text-sm">
+            {form.formState.errors.role?.message}
+          </span>
+        </div>
+        <div className="flex justify-end space-x-3 pt-4">
+          <Button
+            variant="secondary"
+            text={t("cancel")}
+            onClick={() => setIsEditing(false)}
+          />
+          <Button variant="primary" text={t("update")} type="submit" />
+        </div>
+      </motion.form>
+    </AnimatePresence>
   );
 }

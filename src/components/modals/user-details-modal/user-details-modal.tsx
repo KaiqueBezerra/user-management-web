@@ -4,12 +4,13 @@ import type { User } from "../../../context/auth/auth-context";
 import { X } from "lucide-react";
 import { UserDetailsEditModal } from "./user-details-edit-modal/user-details-edit-modal";
 import { toast } from "../../../components/toast/toast";
-import { UserStatusReasonModal } from "./user-details-status-modal/user-details-deactivation-modal";
 import { useDeactivateUser } from "../../../http/deactivations-functions/use-deactivate-user";
 import { useReactivateUser } from "../../../http/deactivations-functions/use-reactivate-user";
 import { useDeleteUser } from "../../../http/users-functions/use-delete-user";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useTranslation } from "react-i18next";
+import { UserDetailsStatusReasonModal } from "./user-details-status-reason-modal/user-details-deactivation-modal";
 
 type UserDetailsModalProps = {
   user: User;
@@ -24,7 +25,6 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
   const { mutateAsync: deleteUser } = useDeleteUser(user.id);
 
   const [isEditing, setIsEditing] = useState(false);
-
   const [statusModalOpen, setStatusModalOpen] = useState<
     null | "deactivate" | "reactivate"
   >(null);
@@ -50,10 +50,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
 
   async function handleDeleteUser() {
     const confirm = window.confirm(t("deleteConfirm"));
-
-    if (!confirm) {
-      return;
-    }
+    if (!confirm) return;
 
     try {
       await deleteUser();
@@ -64,6 +61,7 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
     }
   }
 
+  // Detectar clique fora para fechar
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
@@ -73,7 +71,6 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
       const clickedOutsideReasonModal =
         reasonModalRef.current && !reasonModalRef.current.contains(target);
 
-      // Close only if clicked outside both modals
       if (
         statusModalOpen &&
         clickedOutsideMainModal &&
@@ -82,155 +79,167 @@ export function UserDetailsModal({ user, onClose }: UserDetailsModalProps) {
         setStatusModalOpen(null);
       }
 
-      // Close main modal if clicked outside and reason modal is not open
       if (!statusModalOpen && clickedOutsideMainModal) {
         onClose();
       }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose, statusModalOpen]);
 
   return (
-    <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
-      <div
-        className="bg-zinc-950 border border-zinc-700 rounded-lg shadow-xl w-full max-w-2xl"
-        ref={modalRef}
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="user-details-overlay"
+        className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
-        <div className="flex justify-between items-center border-b border-zinc-700 p-4">
-          <h2 className="text-xl font-semibold">{t("title")}</h2>
-          <button
-            onClick={onClose}
-            className="text-white cursor-pointer top-4 right-4 hover:text-zinc-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
+        <motion.div
+          key="user-details-modal"
+          ref={modalRef}
+          className="bg-zinc-950 border border-zinc-700 rounded-lg shadow-xl w-full max-w-2xl"
+          initial={{ scale: 0.9, opacity: 0, y: 30 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 30 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        >
+          <div className="flex justify-between items-center border-b border-zinc-700 p-4">
+            <h2 className="text-xl font-semibold">{t("title")}</h2>
+            <button
+              onClick={onClose}
+              className="text-white cursor-pointer hover:text-zinc-500"
+            >
+              <X size={20} />
+            </button>
+          </div>
 
-        <div className="p-6">
-          {isEditing ? (
-            <UserDetailsEditModal
-              setIsEditing={setIsEditing}
-              user={user}
-              onClose={onClose}
+          <div className="p-6">
+            {isEditing ? (
+              <UserDetailsEditModal
+                setIsEditing={setIsEditing}
+                user={user}
+                onClose={onClose}
+              />
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">ID</h3>
+                    <p className="mt-1 text-sm text-white">{user.id}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">
+                      {t("status")}
+                    </h3>
+                    <p className="mt-1">
+                      <span
+                        className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                          user.deactivated
+                            ? "bg-red-300 text-red-900"
+                            : "bg-green-300 text-green-900"
+                        }`}
+                      >
+                        {user.deactivated ? t("deactivated") : t("active")}
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">
+                      {t("name")}
+                    </h3>
+                    <p className="mt-1 text-sm text-white">{user.name}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">
+                      {t("email")}
+                    </h3>
+                    <p className="mt-1 text-sm text-white">{user.email}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">
+                      {t("role")}
+                    </h3>
+                    <p className="mt-1">
+                      <span
+                        className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                          user.role === "admin"
+                            ? "bg-purple-300 text-purple-900"
+                            : "bg-blue-300 text-blue-900"
+                        }`}
+                      >
+                        {user.role === "admin" ? t("adminRole") : t("userRole")}
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">
+                      {t("createdAt")}
+                    </h3>
+                    <p className="mt-1 text-sm text-white">
+                      {new Date(user.created_at).toLocaleDateString("pt-BR")}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-400">
+                      {t("updatedAt")}
+                    </h3>
+                    <p className="mt-1 text-sm text-white">
+                      {user.updated_at
+                        ? new Date(user.updated_at).toLocaleDateString("pt-BR")
+                        : "N/A"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-zinc-700 pt-4">
+                  <h3 className="text-sm font-medium text-zinc-300 mb-3">
+                    {t("actions")}
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      variant="primary"
+                      text={t("editUser")}
+                      onClick={() => setIsEditing(true)}
+                    />
+                    {user.deactivated ? (
+                      <Button
+                        variant="secondary"
+                        text={t("reactivateUser")}
+                        onClick={() => setStatusModalOpen("reactivate")}
+                      />
+                    ) : (
+                      <Button
+                        variant="warning"
+                        text={t("deactivateUser")}
+                        onClick={() => setStatusModalOpen("deactivate")}
+                      />
+                    )}
+                    <Button
+                      variant="danger"
+                      text={t("deleteUser")}
+                      onClick={handleDeleteUser}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        <AnimatePresence>
+          {statusModalOpen && (
+            <UserDetailsStatusReasonModal
+              action={statusModalOpen}
+              onConfirm={handleStatusChange}
+              onClose={() => setStatusModalOpen(null)}
+              innerRef={reasonModalRef}
             />
-          ) : (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">ID</h3>
-                  <p className="mt-1 text-sm text-white">{user.id}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">
-                    {t("status")}
-                  </h3>
-                  <p className="mt-1">
-                    <span
-                      className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                        user.deactivated
-                          ? "bg-red-300 text-red-900"
-                          : "bg-green-300 text-green-900"
-                      }`}
-                    >
-                      {user.deactivated ? t("deactivated") : t("active")}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">
-                    {t("name")}
-                  </h3>
-                  <p className="mt-1 text-sm text-white">{user.name}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">
-                    {t("email")}
-                  </h3>
-                  <p className="mt-1 text-sm text-white">{user.email}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">
-                    {t("role")}
-                  </h3>
-                  <p className="mt-1">
-                    <span
-                      className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                        user.role === "admin"
-                          ? "bg-purple-300 text-purple-900"
-                          : "bg-blue-300 text-blue-900"
-                      }`}
-                    >
-                      {user.role === "admin" ? t("adminRole") : t("userRole")}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">
-                    {t("createdAt")}
-                  </h3>
-                  <p className="mt-1 text-sm text-white">
-                    {new Date(user.created_at).toLocaleDateString("pt-BR")}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400">
-                    {t("updatedAt")}
-                  </h3>
-                  <p className="mt-1 text-sm text-white">
-                    {user.updated_at
-                      ? new Date(user.updated_at).toLocaleDateString("pt-BR")
-                      : "N/A"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="border-t border-zinc-700 pt-4">
-                <h3 className="text-sm font-medium text-zinc-300 mb-3">
-                  {t("actions")}
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    variant="primary"
-                    text={t("editUser")}
-                    onClick={() => setIsEditing(true)}
-                  />
-                  {user.deactivated ? (
-                    <Button
-                      variant="secondary"
-                      text={t("reactivateUser")}
-                      onClick={() => setStatusModalOpen("reactivate")}
-                    />
-                  ) : (
-                    <Button
-                      variant="warning"
-                      text={t("deactivateUser")}
-                      onClick={() => setStatusModalOpen("deactivate")}
-                    />
-                  )}
-                  <Button
-                    variant="danger"
-                    text={t("deleteUser")}
-                    onClick={handleDeleteUser}
-                  />
-                </div>
-              </div>
-            </div>
           )}
-        </div>
-      </div>
-
-      {statusModalOpen && (
-        <UserStatusReasonModal
-          action={statusModalOpen}
-          onConfirm={handleStatusChange}
-          onClose={() => setStatusModalOpen(null)}
-          innerRef={reasonModalRef}
-        />
-      )}
-    </div>
+        </AnimatePresence>
+      </motion.div>
+    </AnimatePresence>
   );
 }

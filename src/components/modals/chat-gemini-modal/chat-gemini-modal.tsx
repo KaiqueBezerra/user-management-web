@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconButton } from "../../form/icon-button";
 import { Input } from "../../form/input";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 type Message = {
@@ -73,87 +73,91 @@ export function ChatGeminiModal({ onClose }: { onClose: () => void }) {
   const { isSubmitting } = form.formState;
 
   return (
-    <div className="fixed bottom-20 right-6 z-50 animate-[slideIn_0.25s_ease-out] transform transition-all">
-      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl shadow-xl w-[360px] h-[460px] flex flex-col text-white relative">
-        {/* Header */}
-        <div className="p-4 border-b border-zinc-800 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">{t("title")}</h2>
-          <button
-            onClick={onClose}
-            className="text-zinc-400 hover:text-white transition cursor-pointer"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Chat body */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                msg.from === "user" ? "justify-end" : "justify-start"
-              }`}
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="fixed bottom-20 right-6 z-50"
+      >
+        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl shadow-xl w-[360px] h-[460px] flex flex-col text-white relative">
+          {/* Header */}
+          <div className="p-4 border-b border-zinc-800 flex justify-between items-center">
+            <h2 className="text-lg font-semibold">{t("title")}</h2>
+            <button
+              onClick={onClose}
+              className="text-zinc-400 hover:text-white transition cursor-pointer"
             >
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Chat body */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {messages.map((msg, index) => (
               <div
-                className={`max-w-[80%] px-3 py-2 rounded-lg whitespace-pre-line ${
-                  msg.from === "user"
-                    ? "bg-blue-600 text-white rounded-br-none"
-                    : "bg-zinc-800 text-zinc-100 rounded-bl-none"
+                key={index}
+                className={`flex ${
+                  msg.from === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {msg.text}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`max-w-[80%] px-3 py-2 rounded-lg whitespace-pre-line ${
+                    msg.from === "user"
+                      ? "bg-blue-600 text-white rounded-br-none"
+                      : "bg-zinc-800 text-zinc-100 rounded-bl-none"
+                  }`}
+                >
+                  {msg.text}
+                </motion.div>
               </div>
-            </div>
-          ))}
-          {isSubmitting && (
-            <div className="text-zinc-500 text-sm">{t("thinking")}</div>
-          )}
-        </div>
+            ))}
+            {isSubmitting && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="text-zinc-500 text-sm"
+              >
+                {t("thinking")}
+              </motion.div>
+            )}
+          </div>
 
-        {/* Input field */}
-        <form
-          onSubmit={form.handleSubmit(handleSend)}
-          className="border-t border-zinc-800 p-3 gap-2"
-        >
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <Input
-                id="email"
-                type="email"
-                placeholder={t("emailPlaceholder")}
-                {...form.register("email")}
+          {/* Input field */}
+          <form
+            onSubmit={form.handleSubmit(handleSend)}
+            className="border-t border-zinc-800 p-3 gap-2"
+          >
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t("emailPlaceholder")}
+                  {...form.register("email")}
+                  disabled={isSubmitting}
+                />
+              </div>
+
+              <IconButton
+                icon={Send}
+                onClick={form.handleSubmit(handleSend)}
                 disabled={isSubmitting}
               />
             </div>
-
-            <IconButton
-              icon={Send}
-              onClick={form.handleSubmit(handleSend)}
-              disabled={isSubmitting}
-            />
-          </div>
-          {form.formState.errors.email && (
-            <p className="text-sm text-red-500 mt-1">
-              {form.formState.errors.email.message}
-            </p>
-          )}
-        </form>
-      </div>
-
-      {/* Animates the modal entrance */}
-      <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-    </div>
+            {form.formState.errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {form.formState.errors.email.message}
+              </p>
+            )}
+          </form>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

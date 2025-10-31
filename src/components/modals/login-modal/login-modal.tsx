@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "../../toast/toast";
 import { useNavigate, useRouter } from "@tanstack/react-router";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +29,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginModal({ onClose }: LoginModalProps) {
   const { t } = useTranslation("login");
-
   const { mutateAsync: login } = useLogin();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -84,48 +84,61 @@ export function LoginModal({ onClose }: LoginModalProps) {
   const { isSubmitting } = form.formState;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div
-        ref={modalRef}
-        className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="modal-background"
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
-        <button
-          onClick={onClose}
-          className="absolute text-white cursor-pointer top-4 right-4 hover:text-zinc-600"
+        <motion.div
+          key="modal-content"
+          ref={modalRef}
+          className="bg-zinc-950 rounded-lg p-6 w-full border border-zinc-700 max-w-md relative"
+          initial={{ scale: 0.8, opacity: 0, y: 40 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.8, opacity: 0, y: 40 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
         >
-          <X size={20} />
-        </button>
+          <button
+            onClick={onClose}
+            className="absolute text-white cursor-pointer top-4 right-4 hover:text-zinc-600"
+          >
+            <X size={20} />
+          </button>
 
-        <h2 className="text-2xl font-bold mb-6">{t("loginTitle")}</h2>
+          <h2 className="text-2xl font-bold mb-6">{t("loginTitle")}</h2>
 
-        <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
-          <Input
-            label={t("emailLabel")}
-            id="email"
-            {...form.register("email")}
-            error={form.formState.errors.email?.message}
-          />
-
-          <Input
-            label={t("passwordLabel")}
-            id="password"
-            type="password"
-            {...form.register("password")}
-            error={form.formState.errors.password?.message}
-          />
-
-          <div className="flex">
-            <Button
-              text={t("loginButton")}
-              type="submit"
-              variant="primary"
-              fullWidth
-              className="mt-4"
-              disabled={isSubmitting}
+          <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
+            <Input
+              label={t("emailLabel")}
+              id="email"
+              {...form.register("email")}
+              error={form.formState.errors.email?.message}
             />
-          </div>
-        </form>
-      </div>
-    </div>
+
+            <Input
+              label={t("passwordLabel")}
+              id="password"
+              type="password"
+              {...form.register("password")}
+              error={form.formState.errors.password?.message}
+            />
+
+            <div className="flex">
+              <Button
+                text={t("loginButton")}
+                type="submit"
+                variant="primary"
+                fullWidth
+                className="mt-4"
+                disabled={isSubmitting}
+              />
+            </div>
+          </form>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
